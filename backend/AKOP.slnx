@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/IdentityService/IdentityService.csproj" />
+    <Project Path="src/InstitutionService/InstitutionService.csproj" />
+    <Project Path="src/ReportService/ReportService.csproj" />
+    <Project Path="src/RoutingService/RoutingService.csproj" />
+    <Project Path="src/WorkOrderService/WorkOrderService.csproj" />
+  </Folder>
+</Solution>
