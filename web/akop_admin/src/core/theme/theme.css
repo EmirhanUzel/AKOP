@@ -1,0 +1,15 @@
+:root {
+  /* AKOP Ana Renkleri */
+  --color-primary: #162F49;
+  --color-background: #F6FAFD;
+  --color-card: #FFFFFF;
+
+  /* Yardımcı Renkler */
+  --color-secondary: #64748B;
+  --color-border: #E5EDF0;
+
+  /* Durum Renkleri */
+  --color-warning: #F59E0B;
+  --color-success: #16A34A;
+  --color-error: #DC2626;
+}
