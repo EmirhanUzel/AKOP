@@ -127,13 +127,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               : const Text('Hesap oluştur'),
                         ),
                         const SizedBox(height: 16),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            const Text('Zaten hesabınız var mı?', style: TextStyle(color: AppColors.textSecondary)),
-                            TextButton(onPressed: () => context.pop(), child: const Text('Giriş yap')),
-                          ],
+                        SizedBox(
+                          width: double.infinity,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              const Text('Zaten hesabınız var mı?', style: TextStyle(color: AppColors.textSecondary)),
+                              TextButton(onPressed: () => context.pop(), child: const Text('Giriş yap')),
+                            ],
+                          ),
                         ),
                       ],
                     ),
