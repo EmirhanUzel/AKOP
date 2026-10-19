@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/application/auth_controller.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
-import '../../features/home/home_placeholder_screen.dart';
+import '../../features/profile/presentation/change_password_screen.dart';
+import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/reports/presentation/reports_screen.dart';
+import '../../features/shell/app_shell.dart';
 
 const _authPaths = {'/giris', '/kayit'};
 
@@ -28,7 +31,14 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/giris', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/kayit', builder: (_, _) => const RegisterScreen()),
-      GoRoute(path: '/', builder: (_, _) => const HomePlaceholderScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(shell: shell),
+        branches: [
+          StatefulShellBranch(routes: [GoRoute(path: '/', builder: (_, _) => const ReportsScreen())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/profil', builder: (_, _) => const ProfileScreen())]),
+        ],
+      ),
+      GoRoute(path: '/profil/parola', builder: (_, _) => const ChangePasswordScreen()),
     ],
   );
 });
