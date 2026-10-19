@@ -1,90 +1,88 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'app_colors.dart';
 
 class AppTheme {
+  static const _radius = 12.0;
 
-  // AKOP Ana Renkleri
-  static const Color primaryColor = Color(0xFF162F49);
-  static const Color backgroundColor = Color(0xFFF6FAFD);
-  static const Color cardColor = Color(0xFFFFFFFF);
+  static OutlineInputBorder _border(Color color, [double width = 1]) =>
+      OutlineInputBorder(
+        borderRadius: BorderRadius.circular(_radius),
+        borderSide: BorderSide(color: color, width: width),
+      );
 
-  // Yardımcı Renkler
-  static const Color secondaryColor = Color(0xFF64748B);
-  static const Color borderColor = Color(0xFFE5EDF0);
-
-  // Durum Renkleri
-  static const Color warningColor = Color(0xFFF59E0B);
-  static const Color successColor = Color(0xFF16A34A);
-  static const Color errorColor = Color(0xFFDC2626);
-
-  // Açık Tema
+  // Açık Tema (renkler Stitch DESIGN.md token'larından)
   static ThemeData get lightTheme {
+    final scheme = ColorScheme.fromSeed(seedColor: AppColors.navy).copyWith(
+      primary: AppColors.navy,
+      onPrimary: Colors.white,
+      surface: AppColors.surface,
+      onSurface: AppColors.text,
+      error: AppColors.danger,
+    );
+    final textTheme = GoogleFonts.interTextTheme().apply(
+      bodyColor: AppColors.text,
+      displayColor: AppColors.text,
+    );
+
     return ThemeData(
       useMaterial3: true,
-
-      // Renk Sistemi
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        brightness: Brightness.light,
-      ).copyWith(
-        primary: primaryColor,
-        onPrimary: Colors.white,
-        surface: cardColor,
-        error: errorColor,
-      ),
-
-      // Genel Arka Plan
-      scaffoldBackgroundColor: backgroundColor,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: AppColors.background,
+      textTheme: textTheme,
 
       // AppBar
-      appBarTheme: const AppBarTheme(
-        backgroundColor: backgroundColor,
-        foregroundColor: primaryColor,
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.text,
         elevation: 0,
-        centerTitle: true,
-      ),
-
-      // Kartlar
-      cardTheme: CardThemeData(
-        color: cardColor,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(
-            color: borderColor,
-          ),
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shape: const Border(bottom: BorderSide(color: AppColors.border)),
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.text,
         ),
       ),
 
-      // Butonlar
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(48),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+      // Snackbar
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.navy,
+        contentTextStyle: GoogleFonts.inter(color: Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
 
       // Metin Kutuları
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: borderColor),
+        fillColor: AppColors.surface,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        hintStyle: const TextStyle(color: AppColors.textSecondary),
+        enabledBorder: _border(AppColors.border),
+        focusedBorder: _border(AppColors.navy, 2),
+        errorBorder: _border(AppColors.danger),
+        focusedErrorBorder: _border(AppColors.danger, 2),
+        errorStyle: const TextStyle(color: AppColors.danger, fontSize: 12),
+      ),
+
+      // Butonlar
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.navy,
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(56),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_radius)),
+          textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: primaryColor,
-            width: 1.5,
-          ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.navy,
+          minimumSize: const Size(48, 48),
+          textStyle: GoogleFonts.inter(fontWeight: FontWeight.w700),
         ),
       ),
     );
