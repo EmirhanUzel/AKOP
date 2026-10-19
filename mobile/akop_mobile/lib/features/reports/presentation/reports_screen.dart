@@ -6,6 +6,7 @@ import '../../../core/format.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../../core/widgets/status_badge.dart';
+import '../application/draft_controller.dart';
 import '../application/reports_controller.dart';
 import '../domain/report.dart';
 import '../domain/report_category.dart';
@@ -22,7 +23,8 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   ReportFilter _filter = ReportFilter.all;
 
   void _startNew() {
-    context.push('/yeni/foto'); // ihbar akışı sonraki PR'da
+    ref.read(draftProvider.notifier).reset();
+    context.push('/yeni/foto');
   }
 
   @override
@@ -144,7 +146,7 @@ class _ReportCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: AppColors.border)),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => context.push('/ihbar/${report.id}'), // detay sonraki PR'da
+        onTap: () => context.push('/ihbar/${report.id}'),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(

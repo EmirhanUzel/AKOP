@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../reports/application/draft_controller.dart';
 
 /// Vatandaş kabuğu: İhbarlarım • İhbar Et (ortada) • Profil.
 class AppShell extends ConsumerWidget {
@@ -22,6 +23,7 @@ class AppShell extends ConsumerWidget {
         foregroundColor: Colors.white,
         elevation: 3,
         onPressed: () {
+          ref.read(draftProvider.notifier).reset();
           context.push('/yeni/foto');
         },
         child: const Icon(Icons.add, size: 30),
