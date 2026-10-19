@@ -1,5 +1,7 @@
 using IdentityService.Data;
 using Microsoft.EntityFrameworkCore;
+using IdentityService.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,13 @@ builder.Services.AddDbContext<AppIdentityDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
+
+builder.Services
+    .AddIdentityCore<AppUser>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppIdentityDbContext>()
+    .AddSignInManager();
+
 
 // Controller servislerini ekle
 builder.Services.AddControllers();
