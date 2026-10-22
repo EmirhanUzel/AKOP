@@ -47,6 +47,7 @@ builder.Services
 
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<UserService>();
 
 
 // ========================================
