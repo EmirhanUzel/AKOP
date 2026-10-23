@@ -82,11 +82,14 @@ void main() {
     }
 
     Future<void> fill(WidgetTester tester, {required String email, String again = 'sifre1'}) async {
-      await tester.enterText(find.byType(TextFormField).at(0), 'Ali Veli');
-      await tester.enterText(find.byType(TextFormField).at(1), email);
-      await tester.enterText(find.byType(TextFormField).at(2), 'sifre1');
-      await tester.enterText(find.byType(TextFormField).at(3), again);
-      await tester.tap(find.widgetWithText(FilledButton, 'Hesap oluştur'));
+      await tester.enterText(find.byType(TextFormField).at(0), 'Ali');
+      await tester.enterText(find.byType(TextFormField).at(1), 'Veli');
+      await tester.enterText(find.byType(TextFormField).at(2), email);
+      await tester.enterText(find.byType(TextFormField).at(3), 'sifre1');
+      await tester.enterText(find.byType(TextFormField).at(4), again);
+      final submit = find.widgetWithText(FilledButton, 'Hesap oluştur');
+      await tester.ensureVisible(submit);
+      await tester.tap(submit);
       await tester.pumpAndSettle();
     }
 

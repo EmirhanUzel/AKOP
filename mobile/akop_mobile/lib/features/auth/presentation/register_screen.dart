@@ -15,10 +15,12 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _name = TextEditingController();
+  final _firstName = TextEditingController();
+  final _lastName = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _passwordAgain = TextEditingController();
+  final _scroll = ScrollController();
 
   @override
   void initState() {
@@ -28,21 +30,29 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   void dispose() {
-    _name.dispose();
+    _firstName.dispose();
+    _lastName.dispose();
     _email.dispose();
     _password.dispose();
     _passwordAgain.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    ref.read(authControllerProvider.notifier).register(_name.text, _email.text, _password.text);
+    ref.read(authControllerProvider.notifier).register(_firstName.text, _lastName.text, _email.text, _password.text);
   }
 
   @override
   Widget build(BuildContext context) {
     final auth = ref.watch(authControllerProvider);
+    // Hata kutusu formun en üstünde; görünür olsun diye yukarı kaydır
+    ref.listen(authControllerProvider, (prev, next) {
+      if (next.error != null && prev?.error != next.error) {
+        _scroll.animateTo(0, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+      }
+    });
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -57,6 +67,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             children: [
               Expanded(
                 child: SingleChildScrollView(
+                  controller: _scroll,
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -83,13 +94,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                           const SizedBox(height: 16),
                         ],
-                        const FieldLabel('Ad soyad'),
+                        const FieldLabel('Ad'),
                         TextFormField(
-                          controller: _name,
+                          controller: _firstName,
                           enabled: !auth.loading,
                           textCapitalization: TextCapitalization.words,
-                          decoration: const InputDecoration(hintText: 'Adınız ve soyadınız'),
-                          validator: (v) => (v == null || v.trim().isEmpty) ? 'Ad soyad zorunludur.' : null,
+                          decoration: const InputDecoration(hintText: 'Adınız'),
+                          validator: (v) => (v == null || v.trim().isEmpty) ? 'Ad zorunludur.' : null,
+                        ),
+                        const SizedBox(height: 20),
+                        const FieldLabel('Soyad'),
+                        TextFormField(
+                          controller: _lastName,
+                          enabled: !auth.loading,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: const InputDecoration(hintText: 'Soyadınız'),
+                          validator: (v) => (v == null || v.trim().isEmpty) ? 'Soyad zorunludur.' : null,
                         ),
                         const SizedBox(height: 20),
                         const FieldLabel('E-posta'),
