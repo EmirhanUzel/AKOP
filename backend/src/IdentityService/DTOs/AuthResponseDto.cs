@@ -9,4 +9,5 @@ public class AuthResponseDto
 
     public DateTime ExpiresAtUtc { get; set; }
 
+    public string RefreshToken { get; set; } = "";
 }
