@@ -31,6 +31,16 @@ abstract interface class AuthRepository {
 
   /// Mevcut parola yanlışsa [InvalidCredentials] fırlatır.
   Future<void> changePassword(String email, String current, String next);
+
+  /// Telefonda saklı refresh token ile oturumu sessizce açar; token yoksa, geçersizse
+  /// ya da sunucuya ulaşılamıyorsa null döner.
+  Future<AuthUser?> restoreSession();
+
+  /// Yerel oturumu siler ve sunucuya haber verir (sunucu kapalıysa yine de çıkış yapılır).
+  Future<void> signOut();
+
+  /// Access token yenilenemediğinde (refresh token geçersiz/süresi dolmuş) çağrılır.
+  void Function()? onSessionExpired;
 }
 
 /// Test ve geliştirme için sahte sürüm. Test hesabı: citizen@akop.test / 123456
@@ -41,6 +51,9 @@ class FakeAuthRepository implements AuthRepository {
   final Map<String, ({String name, String password})> _users = {
     'citizen@akop.test': (name: 'Ayşe Yılmaz', password: '123456'),
   };
+
+  @override
+  void Function()? onSessionExpired;
 
   Future<void> _wait() => Future<void>.delayed(delay);
 
@@ -70,4 +83,10 @@ class FakeAuthRepository implements AuthRepository {
     if (u == null || u.password != current) throw InvalidCredentials();
     _users[email] = (name: u.name, password: next);
   }
+
+  @override
+  Future<AuthUser?> restoreSession() async => null;
+
+  @override
+  Future<void> signOut() async {}
 }

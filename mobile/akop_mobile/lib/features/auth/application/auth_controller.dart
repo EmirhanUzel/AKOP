@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/config/api_config.dart';
 import '../data/api_auth_repository.dart';
 import '../data/auth_repository.dart';
+import '../data/token_store.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => ApiAuthRepository(
@@ -14,14 +17,18 @@ final authRepositoryProvider = Provider<AuthRepository>(
       // 400/401 yanıtlarını repository kendisi ele alır
       validateStatus: (s) => s != null && s < 500,
     )),
+    SecureTokenStore(),
   ),
 );
 
 class AuthState {
-  const AuthState({this.user, this.loading = false, this.error});
+  const AuthState({this.user, this.loading = false, this.restoring = false, this.error});
 
   final AuthUser? user;
   final bool loading;
+
+  /// Uygulama açılırken saklı oturum aranıyor.
+  final bool restoring;
   final String? error;
 
   bool get isLoggedIn => user != null;
@@ -29,9 +36,15 @@ class AuthState {
 
 class AuthController extends Notifier<AuthState> {
   @override
-  AuthState build() => const AuthState();
+  AuthState build() {
+    _repo.onSessionExpired = () => state = const AuthState(); // giriş ekranına döner
+    Future.microtask(_restore);
+    return const AuthState(restoring: true);
+  }
 
   AuthRepository get _repo => ref.read(authRepositoryProvider);
+
+  Future<void> _restore() async => state = AuthState(user: await _repo.restoreSession());
 
   Future<void> signIn(String email, String password) => _run(() => _repo.signIn(email, password));
 
@@ -57,7 +70,11 @@ class AuthController extends Notifier<AuthState> {
     if (state.error != null) state = AuthState(user: state.user);
   }
 
-  void signOut() => state = const AuthState();
+  /// Önce ekrandan çıkar, sunucuya haber verme arka planda sürer.
+  void signOut() {
+    state = const AuthState();
+    unawaited(_repo.signOut());
+  }
 
   void updateName(String fullName) {
     final u = state.user;
