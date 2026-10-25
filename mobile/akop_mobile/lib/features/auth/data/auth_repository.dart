@@ -11,18 +11,29 @@ class InvalidCredentials implements Exception {}
 
 class EmailTaken implements Exception {}
 
+/// Kayıt sunucu tarafından reddedildi (ör. parola kuralı); [messages] kullanıcıya gösterilir.
+class RegisterRejected implements Exception {
+  RegisterRejected(this.messages);
+
+  final List<String> messages;
+}
+
+/// Sunucuya ulaşılamadı ya da sunucu hata verdi.
+class NetworkFailure implements Exception {}
+
 abstract interface class AuthRepository {
   /// Başarısız girişte [InvalidCredentials] fırlatır.
   Future<AuthUser> signIn(String email, String password);
 
-  /// E-posta kayıtlıysa [EmailTaken] fırlatır.
-  Future<AuthUser> register(String fullName, String email, String password);
+  /// E-posta kayıtlıysa [EmailTaken], başka bir red için [RegisterRejected] fırlatır.
+  /// Başarılıysa kullanıcı giriş yapmış olarak döner.
+  Future<AuthUser> register(String firstName, String lastName, String email, String password);
 
   /// Mevcut parola yanlışsa [InvalidCredentials] fırlatır.
   Future<void> changePassword(String email, String current, String next);
 }
 
-/// API hazır olana kadar. Test hesabı: citizen@akop.test / 123456
+/// Test ve geliştirme için sahte sürüm. Test hesabı: citizen@akop.test / 123456
 class FakeAuthRepository implements AuthRepository {
   FakeAuthRepository({this.delay = const Duration(milliseconds: 600)});
 
@@ -43,12 +54,13 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<AuthUser> register(String fullName, String email, String password) async {
+  Future<AuthUser> register(String firstName, String lastName, String email, String password) async {
     await _wait();
     final key = email.trim().toLowerCase();
     if (_users.containsKey(key)) throw EmailTaken();
-    _users[key] = (name: fullName.trim(), password: password);
-    return AuthUser(fullName: fullName.trim(), email: key);
+    final name = '${firstName.trim()} ${lastName.trim()}';
+    _users[key] = (name: name, password: password);
+    return AuthUser(fullName: name, email: key);
   }
 
   @override
