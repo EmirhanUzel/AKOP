@@ -45,4 +45,30 @@ public class AuthController : ControllerBase
         
             return Ok(result);
     }
+
+
+    [AllowAnonymous]
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenRequestDto dto)
+    {
+        var result = await _authService.RefreshAsync(dto);
+
+        if (result == null)
+        {
+            return Unauthorized("Geçersiz veya süresi dolmuş Refresh Token.");
+        }
+
+        return Ok(result);
+    }
+
+
+
+    [AllowAnonymous]
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(RefreshTokenRequestDto dto)
+    {
+        await _authService.LogoutAsync(dto);
+        return NoContent();
+    }
+
 }

@@ -7,6 +7,8 @@ using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
 
+using System.Security.Cryptography;
+
 namespace IdentityService.Services;
 
 public class TokenService
@@ -99,5 +101,21 @@ public class TokenService
             Role = role,
             ExpiresAtUtc = expiresAtUtc
         };
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomBytes = RandomNumberGenerator.GetBytes(32);
+
+        return Convert.ToBase64String(randomBytes);
+    }
+
+
+
+    public string HashRefreshToken(string token)
+    {
+        var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+
+        return Convert.ToHexString(hashBytes);
     }
 }
