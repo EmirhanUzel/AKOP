@@ -5,6 +5,8 @@ import 'package:akop_mobile/features/auth/data/auth_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'memory_token_store.dart';
+
 /// İstek yollarına göre hazır yanıt döner; hiçbir ağ kullanmaz.
 class _FakeAdapter implements HttpClientAdapter {
   _FakeAdapter(this.routes);
@@ -29,7 +31,7 @@ class _FakeAdapter implements HttpClientAdapter {
 (ApiAuthRepository, _FakeAdapter) _repo(Map<String, (int, Object?)> routes) {
   final adapter = _FakeAdapter(routes);
   final dio = Dio(BaseOptions(baseUrl: 'http://test', validateStatus: (s) => s != null && s < 500))..httpClientAdapter = adapter;
-  return (ApiAuthRepository(dio), adapter);
+  return (ApiAuthRepository(dio, MemoryTokenStore()), adapter);
 }
 
 const _loginOk = (200, {'accessToken': 'tok', 'role': 'Citizen', 'expiresAtUtc': '2026-10-23T12:00:00Z'});
