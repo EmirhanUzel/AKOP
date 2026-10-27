@@ -1,14 +1,24 @@
+using InstitutionService.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Controller servisleri
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
+// OpenAPI
 builder.Services.AddOpenApi();
+
+// PostgreSQL ve Entity Framework Core
+builder.Services.AddDbContext<InstitutionDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("InstitutionDb")
+    )
+);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Development ortamında OpenAPI
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
