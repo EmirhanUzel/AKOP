@@ -68,8 +68,7 @@ void main() {
       await _pumpApp(tester);
       await _login(tester);
       expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
-      final container = ProviderScope.containerOf(tester.element(find.byType(AkopApp)));
-      container.read(authControllerProvider.notifier).signOut();
+      await tester.tap(find.byTooltip('Çıkış yap'));
       await tester.pumpAndSettle();
       expect(find.text('Hoş geldiniz'), findsOneWidget);
     });
