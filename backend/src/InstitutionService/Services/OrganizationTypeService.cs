@@ -1,6 +1,7 @@
 using InstitutionService.Repositories;
 using InstitutionService.Models;
 using InstitutionService.DTOs;
+using System.Globalization;
 
 namespace InstitutionService.Services;
 
@@ -26,14 +27,31 @@ public class OrganizationTypeService : IOrganizationTypeService
 
     public async Task<OrganizationType> CreateAsync(CreateOrganizationTypeDto dto)
     {
+        var name = dto.Name.Trim();
+        var normalizedName = name.ToUpper(
+            CultureInfo.GetCultureInfo("tr-TR")
+        );
+
+        var nameExists = await _organizationTypeRepository.ExistsByNormalizedNameAsync(normalizedName);
+
+        if (nameExists)
+        {
+
+            throw new InvalidOperationException(
+                "Bu isimde bir kurum türü zaten mevcut"
+            );
+
+        }
         OrganizationType organizationType = new OrganizationType
         {
-            Name = dto.Name
+            Name = name,
+            NormalizedName = normalizedName
         };
 
         await _organizationTypeRepository.AddAsync(organizationType);
 
         return organizationType;
+
     }
 
 

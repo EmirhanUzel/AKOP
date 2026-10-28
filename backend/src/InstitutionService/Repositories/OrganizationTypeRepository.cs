@@ -32,5 +32,14 @@ public class OrganizationTypeRepository : IOrganizationTypeRepository
         await _institutionDbContext.SaveChangesAsync();
     }
 
+    public async Task<bool> ExistsByNormalizedNameAsync(string normalizedName)
+    {
+        var result = await _institutionDbContext.OrganizationTypes
+            .AnyAsync(organizationType =>
+                organizationType.NormalizedName == normalizedName);
+
+        return result;
+    }
+
 
 }

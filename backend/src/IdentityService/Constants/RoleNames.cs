@@ -5,6 +5,7 @@ public static class RoleNames{
     public const string Citizen = "Citizen";
     public const string FieldStaff = "FieldStaff";
     public const string OrgManager = "OrgManager";
+    public const string SystemAdmin = "SystemAdmin";
 
 
 }
