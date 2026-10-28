@@ -35,6 +35,16 @@ builder.Services.AddScoped<
     OrganizationTypeService
 >();
 
+builder.Services.AddScoped<
+    IOrganizationRepository,
+    OrganizationRepository
+>();
+
+builder.Services.AddScoped<
+    IOrganizationService,
+    OrganizationService
+>();
+
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT anahtarı bulunamadı.");
 
@@ -72,6 +82,15 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(
         AuthorizationPolicyNames.SystemAdminOnly,
         policy => policy.RequireRole(RoleNames.SystemAdmin)
+    );
+
+    options.AddPolicy(
+        AuthorizationPolicyNames.OrganizationMemberOnly,
+        policy =>
+        {
+            policy.RequireRole(RoleNames.OrgManager, RoleNames.FieldStaff);
+            policy.RequireClaim("institutionId");
+        }
     );
 });
 
