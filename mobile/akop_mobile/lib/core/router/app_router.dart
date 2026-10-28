@@ -6,7 +6,12 @@ import '../../features/auth/application/auth_controller.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
-import '../../features/home/home_placeholder_screen.dart';
+import '../../features/reports/presentation/new_report/detail_step.dart';
+import '../../features/reports/presentation/new_report/location_step.dart';
+import '../../features/reports/presentation/new_report/photo_step.dart';
+import '../../features/reports/presentation/new_report/summary_step.dart';
+import '../../features/reports/presentation/reports_screen.dart';
+import '../../features/shell/app_shell.dart';
 
 const _authPaths = {'/giris', '/kayit'};
 const _splash = '/yukleniyor';
@@ -33,7 +38,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: _splash, builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/giris', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/kayit', builder: (_, _) => const RegisterScreen()),
-      GoRoute(path: '/', builder: (_, _) => const HomePlaceholderScreen()),
+      GoRoute(path: '/', builder: (_, _) => const AppShell(child: ReportsScreen())),
+      GoRoute(path: '/yeni/foto', builder: (_, _) => const PhotoStep()),
+      GoRoute(path: '/yeni/konum', builder: (_, _) => const LocationStep()),
+      GoRoute(path: '/yeni/detay', builder: (_, _) => const DetailStep()),
+      GoRoute(path: '/yeni/ozet', builder: (_, _) => const SummaryStep()),
     ],
   );
 });
