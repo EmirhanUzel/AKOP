@@ -64,13 +64,27 @@ void main() {
       expect(find.text('E-posta veya parola hatalı.'), findsOneWidget);
     });
 
-    testApp('doğru hesapla ana ekrana geçer, çıkışta girişe döner', (tester) async {
+    testApp('doğru hesapla ihbar listesine geçer, çıkışta girişe döner', (tester) async {
       await _pumpApp(tester);
       await _login(tester);
-      expect(find.text('Hoş geldiniz, Ayşe Yılmaz'), findsOneWidget);
-      await tester.tap(find.text('Çıkış yap'));
+      expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
+      final container = ProviderScope.containerOf(tester.element(find.byType(AkopApp)));
+      container.read(authControllerProvider.notifier).signOut();
       await tester.pumpAndSettle();
       expect(find.text('Hoş geldiniz'), findsOneWidget);
+    });
+  });
+
+  group('ana ekran', () {
+    testApp('Profil sekmesi yönlendirmez, İhbar Et akışı açar', (tester) async {
+      await _pumpApp(tester);
+      await _login(tester);
+      await tester.tap(find.text('Profil'));
+      await tester.pumpAndSettle();
+      expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
+      await tester.tap(find.byTooltip('İhbar Et'));
+      await tester.pumpAndSettle();
+      expect(find.text('Sorunu fotoğraflayın'), findsOneWidget);
     });
   });
 
@@ -104,7 +118,7 @@ void main() {
       await fill(tester, email: 'citizen@akop.test');
       expect(find.text('Bu e-posta ile kayıtlı bir hesap var.'), findsOneWidget);
       await fill(tester, email: 'yeni@akop.test');
-      expect(find.text('Hoş geldiniz, Ali Veli'), findsOneWidget);
+      expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
     });
   });
 }
