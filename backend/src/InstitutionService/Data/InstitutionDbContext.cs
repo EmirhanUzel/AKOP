@@ -12,6 +12,8 @@ public class InstitutionDbContext : DbContext
 
     public DbSet<OrganizationType> OrganizationTypes { get; set; } = null!;
 
+    public DbSet<Organization> Organizations { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -28,6 +30,42 @@ public class InstitutionDbContext : DbContext
 
             entity.HasIndex(organizationType => organizationType.NormalizedName)
                 .IsUnique();
+        });
+
+        modelBuilder.Entity<Organization>(entity =>
+        {
+            entity.HasKey(organization => organization.Id);
+
+            entity.Property(organization => organization.Name)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(organization => organization.NormalizedName)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(organization => organization.City)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(organization => organization.ProfileInfo)
+                .HasMaxLength(1000);
+
+            entity.Property(organization => organization.CreatedAt)
+                .IsRequired();
+
+            entity.HasIndex(organization => new
+                {
+                    organization.NormalizedName,
+                    organization.OrganizationTypeId,
+                    organization.City
+                })
+                .IsUnique();
+
+            entity.HasOne(organization => organization.OrganizationType)
+                .WithMany()
+                .HasForeignKey(organization => organization.OrganizationTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
