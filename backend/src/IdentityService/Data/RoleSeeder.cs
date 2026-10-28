@@ -8,7 +8,8 @@ public static class RoleSeeder
         string[] roles = {
             RoleNames.Citizen,
             RoleNames.FieldStaff,
-            RoleNames.OrgManager
+            RoleNames.OrgManager,
+            RoleNames.SystemAdmin
         };
 
         foreach (var role in roles)
