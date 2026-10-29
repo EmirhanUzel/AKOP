@@ -1,0 +1,25 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace IdentityService.DTOs;
+
+public class CreateInstitutionUserDto
+{
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; } = "";
+
+    [Required]
+    public string Password {get; set;} = "";
+
+    [Required]
+    public string FirstName {get; set;} = "";
+
+    [Required]
+    public string LastName {get; set;} = "";
+
+    public Guid InstitutionId {get; set;}
+
+    [Required]
+    public string Role {get; set;} = "";
+
+}
