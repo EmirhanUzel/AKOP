@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using IdentityService.Clients;
+using IdentityService.Constants;
+using IdentityService.DTOs;
 using IdentityService.Services;
 namespace IdentityService.Controllers;
 using System.Security.Claims;
@@ -11,10 +14,14 @@ using System.Security.Claims;
 public class UsersController : ControllerBase
 {
     private readonly UserService _userService;
+    private readonly IOrganizationClient _organizationClient;
 
-    public UsersController(UserService userService)
+    public UsersController(
+        UserService userService,
+        IOrganizationClient organizationClient)
     {
         _userService = userService;
+        _organizationClient = organizationClient;
     }
 
     [HttpGet("me")]
@@ -36,5 +43,94 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("institution")]
+    [Authorize(Policy = AuthorizationPolicyNames.SystemAdminOnly)]
+    public async Task<IActionResult> CreateInstitutionUser([FromBody] CreateInstitutionUserDto dto)
+    {
+        var authorizationHeader = Request.Headers.Authorization.ToString();
+
+        try
+        {
+            var organizationExists = await _organizationClient.ExistsAsync(
+                dto.InstitutionId,
+                authorizationHeader,
+                HttpContext.RequestAborted
+            );
+
+            if (!organizationExists)
+            {
+                return BadRequest("Kurum bulunamadı.");
+            }
+        }
+        catch (HttpRequestException)
+        {
+            return StatusCode(
+                StatusCodes.Status503ServiceUnavailable,
+                "Kurum servisine ulaşılamadı."
+            );
+        }
+
+        var result = await _userService.CreateInstitutionUserAsync(dto);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return StatusCode(
+            StatusCodes.Status201Created,
+            "Kurum kullanıcısı oluşturuldu."
+        );
+    }
+
+    [HttpPost("my-institution/field-staff")]
+    [Authorize(Policy = AuthorizationPolicyNames.OrgManagerOnly)]
+    public async Task<IActionResult> CreateFieldStaff([FromBody] CreateFieldStaffDto dto)
+    {
+        var institutionIdValue = User.FindFirstValue("institutionId");
+
+        if (!Guid.TryParse(institutionIdValue, out var institutionId))
+        {
+            return Forbid();
+        }
+
+        var authorizationHeader = Request.Headers.Authorization.ToString();
+
+        try
+        {
+            var organizationExists = await _organizationClient
+                .CurrentOrganizationExistsAsync(
+                    authorizationHeader,
+                    HttpContext.RequestAborted
+                );
+
+            if (!organizationExists)
+            {
+                return BadRequest("Kurum bulunamadı.");
+            }
+        }
+        catch (HttpRequestException)
+        {
+            return StatusCode(
+                StatusCodes.Status503ServiceUnavailable,
+                "Kurum servisine ulaşılamadı."
+            );
+        }
+
+        var result = await _userService.CreateFieldStaffAsync(
+            dto,
+            institutionId
+        );
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return StatusCode(
+            StatusCodes.Status201Created,
+            "Saha personeli oluşturuldu."
+        );
+    }
 
 }

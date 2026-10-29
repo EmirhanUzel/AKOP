@@ -1,5 +1,7 @@
 using System.Text;
 
+using IdentityService.Clients;
+using IdentityService.Constants;
 using IdentityService.Data;
 using IdentityService.Models;
 using IdentityService.Services;
@@ -48,6 +50,17 @@ builder.Services
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<UserService>();
+
+var institutionServiceUrl = builder.Configuration[
+    "ServiceUrls:InstitutionService"
+] ?? throw new InvalidOperationException(
+    "InstitutionService adresi bulunamadı."
+);
+
+builder.Services.AddHttpClient<IOrganizationClient, OrganizationClient>(client =>
+{
+    client.BaseAddress = new Uri(institutionServiceUrl);
+});
 
 
 // ========================================
@@ -115,7 +128,22 @@ builder.Services
 // 6. AUTHORIZATION
 // ========================================
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(
+        AuthorizationPolicyNames.SystemAdminOnly,
+        policy => policy.RequireRole(RoleNames.SystemAdmin)
+    );
+
+    options.AddPolicy(
+        AuthorizationPolicyNames.OrgManagerOnly,
+        policy =>
+        {
+            policy.RequireRole(RoleNames.OrgManager);
+            policy.RequireClaim("institutionId");
+        }
+    );
+});
 
 
 // ========================================
