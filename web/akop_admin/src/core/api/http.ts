@@ -15,6 +15,10 @@ export class ApiError extends Error {
 function messageFrom(body: string, status: number): string {
   try {
     const json = JSON.parse(body)
+    // Identity hataları [{ code, description }] dizisi gelir
+    if (Array.isArray(json) && json[0]?.description) {
+      return json.map((e: { description: string }) => e.description).join(' ')
+    }
     const first = json?.errors && Object.values<string[]>(json.errors)[0]?.[0]
     if (first) return first
   } catch {
@@ -36,5 +40,7 @@ export async function request<T>(url: string, init: RequestInit = {}, token?: st
   }
   const body = await res.text()
   if (!res.ok) throw new ApiError(res.status, messageFrom(body, res.status))
-  return (body ? JSON.parse(body) : undefined) as T
+  if (!body) return undefined as T
+  // Bazı uçlar JSON yerine düz metin döner (örn. "Kurum kullanıcısı oluşturuldu.")
+  return (res.headers.get('Content-Type')?.includes('json') ? JSON.parse(body) : body) as T
 }
