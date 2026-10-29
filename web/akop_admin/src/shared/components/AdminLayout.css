@@ -1,0 +1,90 @@
+.admin-page {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: Inter, system-ui, 'Segoe UI', Arial, sans-serif;
+}
+
+.admin-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding: 14px 24px;
+  background-color: var(--color-card);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.admin-accent {
+  width: 6px;
+  height: 18px;
+  border-radius: 3px;
+  background-color: var(--color-accent);
+}
+
+.admin-nav {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+}
+
+.admin-nav button {
+  height: 36px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-secondary);
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.admin-nav button[aria-current='page'] {
+  font-weight: 600;
+  color: var(--color-primary);
+  border-bottom-color: var(--color-accent);
+}
+
+.admin-signout {
+  height: 36px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-primary);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-nav button:focus-visible,
+.admin-signout:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.admin-main h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-primary);
+}

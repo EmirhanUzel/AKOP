@@ -115,129 +115,118 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
   }
 
   return (
-    <div className="org-page">
-      <header className="org-topbar">
-        <div className="org-wordmark">
-          AKOP<span className="org-accent" aria-hidden="true" />
-        </div>
-        <button type="button" className="org-signout" onClick={onSignOut}>Çıkış yap</button>
-      </header>
+    <>
+      <section className="org-card" aria-labelledby="add-title">
+        <h2 id="add-title">Kurum ekle</h2>
+        <form className="org-form" onSubmit={addOrganization} noValidate>
+          <div className="org-field">
+            <label htmlFor="org-name">Kurum adı</label>
+            <input id="org-name" value={name} onChange={(e) => setName(e.target.value)} aria-invalid={!!errors.name} />
+            {errors.name && <span className="org-error">{errors.name}</span>}
+          </div>
 
-      <main className="org-main">
-        <h1>Kurumlar</h1>
+          <div className="org-field">
+            <label htmlFor="org-city">Şehir</label>
+            <input id="org-city" value={city} onChange={(e) => setCity(e.target.value)} aria-invalid={!!errors.city} />
+            {errors.city && <span className="org-error">{errors.city}</span>}
+          </div>
 
-        <section className="org-card" aria-labelledby="add-title">
-          <h2 id="add-title">Kurum ekle</h2>
-          <form className="org-form" onSubmit={addOrganization} noValidate>
-            <div className="org-field">
-              <label htmlFor="org-name">Kurum adı</label>
-              <input id="org-name" value={name} onChange={(e) => setName(e.target.value)} aria-invalid={!!errors.name} />
-              {errors.name && <span className="org-error">{errors.name}</span>}
+          <div className="org-field">
+            <label htmlFor="org-type">Kurum türü</label>
+            <select id="org-type" value={typeId} onChange={(e) => setTypeId(e.target.value)} aria-invalid={!!errors.type}>
+              <option value="">Seçin</option>
+              {types.map((t) => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+            {errors.type && <span className="org-error">{errors.type}</span>}
+            <div className="org-inline">
+              <input
+                aria-label="Yeni kurum türü adı"
+                placeholder={types.length ? 'Listede yok mu? Yeni tür' : 'İlk kurum türünü ekleyin'}
+                value={newType}
+                onChange={(e) => setNewType(e.target.value)}
+              />
+              <button type="button" className="org-secondary" onClick={addType}>Tür ekle</button>
             </div>
+            {typeError && <span className="org-error">{typeError}</span>}
+          </div>
 
-            <div className="org-field">
-              <label htmlFor="org-city">Şehir</label>
-              <input id="org-city" value={city} onChange={(e) => setCity(e.target.value)} aria-invalid={!!errors.city} />
-              {errors.city && <span className="org-error">{errors.city}</span>}
-            </div>
+          <div className="org-field">
+            <label htmlFor="org-profile">Profil bilgisi (isteğe bağlı)</label>
+            <textarea id="org-profile" rows={3} maxLength={1000} value={profileInfo} onChange={(e) => setProfileInfo(e.target.value)} />
+          </div>
 
-            <div className="org-field">
-              <label htmlFor="org-type">Kurum türü</label>
-              <select id="org-type" value={typeId} onChange={(e) => setTypeId(e.target.value)} aria-invalid={!!errors.type}>
-                <option value="">Seçin</option>
-                {types.map((t) => (
-                  <option key={t.id} value={t.id}>{t.name}</option>
-                ))}
-              </select>
-              {errors.type && <span className="org-error">{errors.type}</span>}
-              <div className="org-inline">
-                <input
-                  aria-label="Yeni kurum türü adı"
-                  placeholder={types.length ? 'Listede yok mu? Yeni tür' : 'İlk kurum türünü ekleyin'}
-                  value={newType}
-                  onChange={(e) => setNewType(e.target.value)}
-                />
-                <button type="button" className="org-secondary" onClick={addType}>Tür ekle</button>
-              </div>
-              {typeError && <span className="org-error">{typeError}</span>}
-            </div>
+          {formError && <p className="org-form-error" role="alert">{formError}</p>}
+          <button type="submit" className="org-primary" disabled={saving}>
+            {saving ? 'Ekleniyor…' : 'Kurum ekle'}
+          </button>
+        </form>
+      </section>
 
-            <div className="org-field">
-              <label htmlFor="org-profile">Profil bilgisi (isteğe bağlı)</label>
-              <textarea id="org-profile" rows={3} maxLength={1000} value={profileInfo} onChange={(e) => setProfileInfo(e.target.value)} />
-            </div>
+      {managerFor && (
+        <ManagerForm
+          key={managerFor.id}
+          token={token}
+          organization={managerFor}
+          toMessage={messageOf}
+          onCancel={() => setManagerFor(null)}
+          onDone={() => {
+            setNotice(`${managerFor.name} için yönetici hesabı oluşturuldu.`)
+            setManagerFor(null)
+          }}
+        />
+      )}
 
-            {formError && <p className="org-form-error" role="alert">{formError}</p>}
-            <button type="submit" className="org-primary" disabled={saving}>
-              {saving ? 'Ekleniyor…' : 'Kurum ekle'}
-            </button>
-          </form>
-        </section>
-
-        {managerFor && (
-          <ManagerForm
-            key={managerFor.id}
-            token={token}
-            organization={managerFor}
-            toMessage={messageOf}
-            onCancel={() => setManagerFor(null)}
-            onDone={() => {
-              setNotice(`${managerFor.name} için yönetici hesabı oluşturuldu.`)
-              setManagerFor(null)
-            }}
-          />
+      <section className="org-card" aria-labelledby="list-title">
+        <h2 id="list-title">Kayıtlı kurumlar</h2>
+        {notice && <p className="org-notice" role="status">{notice}</p>}
+        {loading && <p className="org-note">Yükleniyor…</p>}
+        {loadError && <p className="org-form-error" role="alert">{loadError}</p>}
+        {!loading && !loadError && organizations.length === 0 && (
+          <p className="org-note">Henüz kurum eklenmemiş.</p>
         )}
-
-        <section className="org-card" aria-labelledby="list-title">
-          <h2 id="list-title">Kayıtlı kurumlar</h2>
-          {notice && <p className="org-notice" role="status">{notice}</p>}
-          {loading && <p className="org-note">Yükleniyor…</p>}
-          {loadError && <p className="org-form-error" role="alert">{loadError}</p>}
-          {!loading && !loadError && organizations.length === 0 && (
-            <p className="org-note">Henüz kurum eklenmemiş.</p>
-          )}
-          {organizations.length > 0 && (
-            <div className="org-table-wrap">
-              <table className="org-table">
-                <thead>
-                  <tr>
-                    <th>Kurum</th>
-                    <th>Tür</th>
-                    <th>Şehir</th>
-                    <th>Eklenme</th>
-                    <th><span className="org-sr">İşlemler</span></th>
+        {organizations.length > 0 && (
+          <div className="org-table-wrap">
+            <table className="org-table">
+              <thead>
+                <tr>
+                  <th>Kurum</th>
+                  <th>Tür</th>
+                  <th>Şehir</th>
+                  <th>Eklenme</th>
+                  <th><span className="org-sr">İşlemler</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                {organizations.map((o) => (
+                  <tr key={o.id}>
+                    <td>
+                      {o.name}
+                      {o.profileInfo && <div className="org-sub">{o.profileInfo}</div>}
+                    </td>
+                    <td>{o.organizationTypeName}</td>
+                    <td>{o.city}</td>
+                    <td>{new Date(o.createdAt).toLocaleDateString('tr-TR')}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="org-secondary"
+                        onClick={() => {
+                          setNotice('')
+                          setManagerFor(o)
+                        }}
+                      >
+                        Yönetici ekle
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {organizations.map((o) => (
-                    <tr key={o.id}>
-                      <td>
-                        {o.name}
-                        {o.profileInfo && <div className="org-sub">{o.profileInfo}</div>}
-                      </td>
-                      <td>{o.organizationTypeName}</td>
-                      <td>{o.city}</td>
-                      <td>{new Date(o.createdAt).toLocaleDateString('tr-TR')}</td>
-                      <td>
-                        <button
-                          type="button"
-                          className="org-secondary"
-                          onClick={() => {
-                            setNotice('')
-                            setManagerFor(o)
-                          }}
-                        >
-                          Yönetici ekle
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      </main>
-    </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </>
   )
 }
