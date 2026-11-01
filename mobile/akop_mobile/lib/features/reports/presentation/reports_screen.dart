@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
-import '../../auth/application/auth_controller.dart';
 
 /// İhbar listesi API'si hazır olana kadar yalnızca filtre çipleri ve boş durum gösterilir.
-class ReportsScreen extends ConsumerStatefulWidget {
+class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
   @override
-  ConsumerState<ReportsScreen> createState() => _ReportsScreenState();
+  State<ReportsScreen> createState() => _ReportsScreenState();
 }
 
-class _ReportsScreenState extends ConsumerState<ReportsScreen> {
+class _ReportsScreenState extends State<ReportsScreen> {
   static const _filters = ['Tümü', 'Devam eden', 'Onay bekleyen', 'Çözülen'];
 
   int _selected = 0;
@@ -20,11 +18,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('İhbarlarım'),
-        // Profil sayfası gelene kadar geçici çıkış yolu.
-        actions: [IconButton(tooltip: 'Çıkış yap', icon: const Icon(Icons.logout), onPressed: ref.read(authControllerProvider.notifier).signOut)],
-      ),
+      appBar: AppBar(title: const Text('İhbarlarım')),
       body: Column(
         children: [
           SizedBox(

@@ -10,8 +10,9 @@ import '../../features/reports/presentation/new_report/detail_step.dart';
 import '../../features/reports/presentation/new_report/location_step.dart';
 import '../../features/reports/presentation/new_report/photo_step.dart';
 import '../../features/reports/presentation/new_report/summary_step.dart';
-import '../../features/reports/presentation/reports_screen.dart';
+import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/shell/app_shell.dart';
+import '../../features/shell/role_home.dart';
 
 const _authPaths = {'/giris', '/kayit'};
 const _splash = '/yukleniyor';
@@ -38,7 +39,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: _splash, builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/giris', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/kayit', builder: (_, _) => const RegisterScreen()),
-      GoRoute(path: '/', builder: (_, _) => const AppShell(child: ReportsScreen())),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(navigationShell: shell),
+        branches: [
+          StatefulShellBranch(routes: [GoRoute(path: '/', builder: (_, _) => const RoleHome())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/profil', builder: (_, _) => const ProfileScreen())]),
+        ],
+      ),
       GoRoute(path: '/yeni/foto', builder: (_, _) => const PhotoStep()),
       GoRoute(path: '/yeni/konum', builder: (_, _) => const LocationStep()),
       GoRoute(path: '/yeni/detay', builder: (_, _) => const DetailStep()),

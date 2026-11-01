@@ -68,22 +68,11 @@ void main() {
       await _pumpApp(tester);
       await _login(tester);
       expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
-      await tester.tap(find.byTooltip('Çıkış yap'));
-      await tester.pumpAndSettle();
-      expect(find.text('Hoş geldiniz'), findsOneWidget);
-    });
-  });
-
-  group('ana ekran', () {
-    testApp('Profil sekmesi yönlendirmez, İhbar Et akışı açar', (tester) async {
-      await _pumpApp(tester);
-      await _login(tester);
       await tester.tap(find.text('Profil'));
       await tester.pumpAndSettle();
-      expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
-      await tester.tap(find.byTooltip('İhbar Et'));
+      await tester.tap(find.text('Çıkış yap'));
       await tester.pumpAndSettle();
-      expect(find.text('Sorunu fotoğraflayın'), findsOneWidget);
+      expect(find.text('Hoş geldiniz'), findsOneWidget);
     });
   });
 
