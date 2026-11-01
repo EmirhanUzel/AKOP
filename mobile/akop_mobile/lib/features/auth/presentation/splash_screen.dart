@@ -13,10 +13,7 @@ class SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'AKOP',
-              style: TextStyle(color: AppColors.navy, fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: 1.6),
-            ),
+            Image(image: AssetImage('assets/images/akop_logo.png'), height: 64),
             SizedBox(height: 24),
             CircularProgressIndicator(color: AppColors.navy),
           ],
