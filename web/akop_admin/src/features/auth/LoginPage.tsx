@@ -54,9 +54,7 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (session: Sessio
   return (
     <main className="login-page">
       <div className="login-brand">
-        <div className="login-wordmark">
-          AKOP<span className="login-accent" aria-hidden="true" />
-        </div>
+        <img className="login-logo" src="/akop-logo.png" alt="AKOP" />
         <p>Vatandaş bildirimlerini tek yerden yönetin.</p>
       </div>
 

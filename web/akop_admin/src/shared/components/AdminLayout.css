@@ -15,20 +15,10 @@
   border-bottom: 1px solid var(--color-border);
 }
 
-.admin-wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--color-primary);
-}
-
-.admin-accent {
-  width: 6px;
-  height: 18px;
-  border-radius: 3px;
-  background-color: var(--color-accent);
+.admin-logo {
+  display: block;
+  height: 40px;
+  width: auto;
 }
 
 .admin-nav {
