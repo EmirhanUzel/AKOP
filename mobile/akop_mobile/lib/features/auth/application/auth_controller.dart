@@ -44,7 +44,15 @@ class AuthController extends Notifier<AuthState> {
 
   AuthRepository get _repo => ref.read(authRepositoryProvider);
 
-  Future<void> _restore() async => state = AuthState(user: await _repo.restoreSession());
+  Future<void> _restore() async {
+    final user = await _repo.restoreSession();
+    if (user != null && !user.role.usesMobileApp) {
+      unawaited(_repo.signOut());
+      state = const AuthState();
+      return;
+    }
+    state = AuthState(user: user);
+  }
 
   Future<void> signIn(String email, String password) => _run(() => _repo.signIn(email, password));
 
@@ -54,7 +62,14 @@ class AuthController extends Notifier<AuthState> {
   Future<void> _run(Future<AuthUser> Function() action) async {
     state = const AuthState(loading: true);
     try {
-      state = AuthState(user: await action());
+      final user = await action();
+      if (user.role.usesMobileApp) {
+        state = AuthState(user: user);
+      } else {
+        // Kurum yöneticisi ve sistem yöneticisi web panelini kullanır
+        unawaited(_repo.signOut());
+        state = const AuthState(error: 'Bu hesap mobil uygulamada kullanılamıyor. Web panelinden giriş yapın.');
+      }
     } on InvalidCredentials {
       state = const AuthState(error: 'E-posta veya parola hatalı.');
     } on EmailTaken {

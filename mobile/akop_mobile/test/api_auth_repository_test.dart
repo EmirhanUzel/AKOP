@@ -47,6 +47,16 @@ void main() {
     expect(adapter.calls.last.headers['Authorization'], 'Bearer tok');
   });
 
+  test('giriş: me cevabındaki rol kullanıcıya aktarılır', () async {
+    for (final (apiRole, expected) in [('Citizen', UserRole.citizen), ('FieldStaff', UserRole.fieldStaff), ('OrgManager', UserRole.other)]) {
+      final (repo, _) = _repo({
+        'POST /api/Auth/login': _loginOk,
+        'GET /api/Users/me': (200, {'email': 'a@akop.test', 'firstName': 'A', 'lastName': 'B', 'role': apiRole}),
+      });
+      expect((await repo.signIn('a@akop.test', 'Sifre1!')).role, expected, reason: apiRole);
+    }
+  });
+
   test('giriş: 401 InvalidCredentials verir', () async {
     final (repo, _) = _repo({'POST /api/Auth/login': (401, 'E-posta veya şifre hatalı')});
     expect(repo.signIn('a@b.co', 'x'), throwsA(isA<InvalidCredentials>()));

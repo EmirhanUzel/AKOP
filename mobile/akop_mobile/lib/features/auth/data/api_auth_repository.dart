@@ -83,7 +83,11 @@ class ApiAuthRepository implements AuthRepository {
   Future<AuthUser> _me({String? fallbackEmail}) async {
     final me = _ok(await _call(() => _dio.get<dynamic>('/api/Users/me')));
     final name = '${me['firstName'] ?? ''} ${me['lastName'] ?? ''}'.trim();
-    return AuthUser(fullName: name, email: (me['email'] as String?) ?? fallbackEmail ?? '');
+    return AuthUser(
+      fullName: name,
+      email: (me['email'] as String?) ?? fallbackEmail ?? '',
+      role: UserRole.parse(me['role'] as String?),
+    );
   }
 
   Future<void> _storeTokens(Map<String, dynamic> body) async {

@@ -1,10 +1,30 @@
+/// Mobil uygulamayı yalnızca vatandaş ve saha personeli kullanır; diğer roller web panelini kullanır.
+enum UserRole {
+  citizen('Vatandaş'),
+  fieldStaff('Saha personeli'),
+  other('');
+
+  const UserRole(this.label);
+
+  final String label;
+
+  bool get usesMobileApp => this != other;
+
+  static UserRole parse(String? value) => switch (value) {
+        'Citizen' => citizen,
+        'FieldStaff' => fieldStaff,
+        _ => other,
+      };
+}
+
 class AuthUser {
-  const AuthUser({required this.fullName, required this.email});
+  const AuthUser({required this.fullName, required this.email, required this.role});
 
   final String fullName;
   final String email;
+  final UserRole role;
 
-  AuthUser copyWith({String? fullName}) => AuthUser(fullName: fullName ?? this.fullName, email: email);
+  AuthUser copyWith({String? fullName}) => AuthUser(fullName: fullName ?? this.fullName, email: email, role: role);
 }
 
 class InvalidCredentials implements Exception {}
@@ -43,13 +63,15 @@ abstract interface class AuthRepository {
   void Function()? onSessionExpired;
 }
 
-/// Test ve geliştirme için sahte sürüm. Test hesabı: citizen@akop.test / 123456
+/// Test ve geliştirme için sahte sürüm. Test hesapları: citizen@akop.test ve fieldstaff@akop.test, parola 123456
 class FakeAuthRepository implements AuthRepository {
   FakeAuthRepository({this.delay = const Duration(milliseconds: 600)});
 
   final Duration delay;
-  final Map<String, ({String name, String password})> _users = {
-    'citizen@akop.test': (name: 'Ayşe Yılmaz', password: '123456'),
+  final Map<String, ({String name, String password, UserRole role})> _users = {
+    'citizen@akop.test': (name: 'Ayşe Yılmaz', password: '123456', role: UserRole.citizen),
+    'fieldstaff@akop.test': (name: 'Mehmet Demir', password: '123456', role: UserRole.fieldStaff),
+    'manager@akop.test': (name: 'Zeynep Kaya', password: '123456', role: UserRole.other),
   };
 
   @override
@@ -63,7 +85,7 @@ class FakeAuthRepository implements AuthRepository {
     final key = email.trim().toLowerCase();
     final u = _users[key];
     if (u == null || u.password != password) throw InvalidCredentials();
-    return AuthUser(fullName: u.name, email: key);
+    return AuthUser(fullName: u.name, email: key, role: u.role);
   }
 
   @override
@@ -72,8 +94,8 @@ class FakeAuthRepository implements AuthRepository {
     final key = email.trim().toLowerCase();
     if (_users.containsKey(key)) throw EmailTaken();
     final name = '${firstName.trim()} ${lastName.trim()}';
-    _users[key] = (name: name, password: password);
-    return AuthUser(fullName: name, email: key);
+    _users[key] = (name: name, password: password, role: UserRole.citizen);
+    return AuthUser(fullName: name, email: key, role: UserRole.citizen);
   }
 
   @override
@@ -81,7 +103,7 @@ class FakeAuthRepository implements AuthRepository {
     await _wait();
     final u = _users[email];
     if (u == null || u.password != current) throw InvalidCredentials();
-    _users[email] = (name: u.name, password: next);
+    _users[email] = (name: u.name, password: next, role: u.role);
   }
 
   @override
