@@ -55,15 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'AKOP',
-                          style: TextStyle(
-                            color: AppColors.navy,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.6,
-                          ),
-                        ),
+                        const Image(image: AssetImage('assets/images/akop_logo.png'), height: 48, alignment: Alignment.centerLeft),
                         const SizedBox(height: 32),
                         Text(
                           'Hoş geldiniz',
