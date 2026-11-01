@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import App from './App'
 import { mockFetch } from './test/mockFetch'
 
@@ -17,10 +17,12 @@ function signedIn(token = 'tok') {
   sessionStorage.setItem('akop_session', JSON.stringify({ token, role: 'SystemAdmin' }))
 }
 
+beforeEach(() => window.history.pushState({}, '', '/admin'))
+
 const heading = () => screen.getByRole('heading', { level: 1 })
 
 describe('giriş akışı', () => {
-  it('SystemAdmin girince kurumlar ekranı açılır ve oturum saklanır', async () => {
+  it('sistem yöneticisi /admin üzerinden girince kurumlar ekranı açılır ve oturum saklanır', async () => {
     mockFetch({ [LOGIN]: { json: { accessToken: 'yeni', role: 'SystemAdmin' } }, [ORGS]: { json: orgs }, [TYPES]: { json: types } })
     render(<App />)
     fireEvent.change(screen.getByLabelText('E-posta'), { target: { value: 'admin@akop.test' } })
@@ -40,7 +42,7 @@ describe('sayfa yenileme ve çıkış', () => {
     render(<App />)
 
     expect(await screen.findByText('Çankaya Belediyesi')).toBeTruthy()
-    expect(screen.queryByText('Kurum girişi')).toBeNull()
+    expect(screen.queryByText('Sistem yöneticisi girişi')).toBeNull()
     const headers = fetchMock.mock.calls[0][1]!.headers as Headers
     expect(headers.get('Authorization')).toBe('Bearer kayitli-token')
   })
@@ -52,7 +54,7 @@ describe('sayfa yenileme ve çıkış', () => {
     await screen.findByText('Çankaya Belediyesi')
 
     fireEvent.click(screen.getByRole('button', { name: 'Çıkış yap' }))
-    expect(screen.getByText('Kurum girişi')).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'Sistem yöneticisi girişi' })).toBeTruthy()
     expect(sessionStorage.getItem('akop_session')).toBeNull()
   })
 
@@ -61,7 +63,7 @@ describe('sayfa yenileme ve çıkış', () => {
     mockFetch({ [ORGS]: { status: 401 }, [TYPES]: { status: 401 } })
     render(<App />)
 
-    expect(await screen.findByText('Kurum girişi')).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Sistem yöneticisi girişi' })).toBeTruthy()
     expect(sessionStorage.getItem('akop_session')).toBeNull()
   })
 })
@@ -122,5 +124,59 @@ describe('Kurumlar / Kurum türleri geçişi', () => {
     fireEvent.change(screen.getByLabelText('Tür adı'), { target: { value: 'Belediye' } })
     fireEvent.click(screen.getByRole('button', { name: 'Tür ekle' }))
     await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('Bu isimde bir kurum türü zaten mevcut'))
+  })
+})
+
+describe('iki ayrı giriş', () => {
+  const ORG_ME = 'GET /institution/api/Organizations/me'
+  const myOrg = { name: 'ASKİ', organizationTypeName: 'Su İdaresi', city: 'Ankara', profileInfo: 'Su işleri', createdAt: '2026-10-30T10:00:00Z' }
+
+  it('ana adres kurum girişidir, admin paneli açılmaz', () => {
+    window.history.pushState({}, '', '/')
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Kurum girişi' })).toBeTruthy()
+  })
+
+  it('/admin adresi sistem yöneticisi girişidir', () => {
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Sistem yöneticisi girişi' })).toBeTruthy()
+  })
+
+  it('kurum yöneticisi ana adresten girince kendi kurum bilgilerini görür', async () => {
+    window.history.pushState({}, '', '/')
+    mockFetch({ [LOGIN]: { json: { accessToken: 'ktok', role: 'OrgManager' } }, [ORG_ME]: { json: myOrg } })
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('E-posta'), { target: { value: 'mudur@akop.test' } })
+    fireEvent.change(screen.getByLabelText('Şifre'), { target: { value: 'Gizli123!' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Giriş yap' }))
+
+    expect(await screen.findByText('Su İdaresi')).toBeTruthy()
+    expect(heading().textContent).toBe('Kurumum')
+    expect(screen.getByText('ASKİ')).toBeTruthy()
+    expect(screen.queryByRole('navigation', { name: 'Yönetim bölümleri' })).toBeNull()
+  })
+
+  it('kayıtlı sistem yöneticisi oturumu ana adreste geçerli sayılmaz', () => {
+    window.history.pushState({}, '', '/')
+    signedIn()
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Kurum girişi' })).toBeTruthy()
+  })
+
+  it('kayıtlı kurum yöneticisi oturumu /admin adresinde geçerli sayılmaz', () => {
+    sessionStorage.setItem('akop_session', JSON.stringify({ token: 'ktok', role: 'OrgManager' }))
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Sistem yöneticisi girişi' })).toBeTruthy()
+  })
+
+  it('kurum sayfasında çıkış yapınca giriş sayfasına döner, kurum bilgisi 401 verirse de', async () => {
+    window.history.pushState({}, '', '/')
+    sessionStorage.setItem('akop_session', JSON.stringify({ token: 'ktok', role: 'OrgManager' }))
+    mockFetch({ [ORG_ME]: { json: myOrg } })
+    render(<App />)
+    await screen.findByText('ASKİ')
+    fireEvent.click(screen.getByRole('button', { name: 'Çıkış yap' }))
+    expect(screen.getByRole('heading', { name: 'Kurum girişi' })).toBeTruthy()
+    expect(sessionStorage.getItem('akop_session')).toBeNull()
   })
 })
