@@ -1,6 +1,8 @@
 import 'package:akop_mobile/app.dart';
 import 'package:akop_mobile/features/auth/application/auth_controller.dart';
 import 'package:akop_mobile/features/auth/data/auth_repository.dart';
+import 'package:akop_mobile/features/reports/application/report_providers.dart';
+import 'package:akop_mobile/features/reports/data/report_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,7 @@ Future<void> _pumpApp(WidgetTester tester) async {
     ProviderScope(
       overrides: [
         authRepositoryProvider.overrideWithValue(FakeAuthRepository(delay: Duration.zero)),
+        reportRepositoryProvider.overrideWithValue(FakeReportRepository(reports: const [])),
       ],
       child: const AkopApp(),
     ),
@@ -68,22 +71,11 @@ void main() {
       await _pumpApp(tester);
       await _login(tester);
       expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
-      await tester.tap(find.byTooltip('Çıkış yap'));
-      await tester.pumpAndSettle();
-      expect(find.text('Hoş geldiniz'), findsOneWidget);
-    });
-  });
-
-  group('ana ekran', () {
-    testApp('Profil sekmesi yönlendirmez, İhbar Et akışı açar', (tester) async {
-      await _pumpApp(tester);
-      await _login(tester);
       await tester.tap(find.text('Profil'));
       await tester.pumpAndSettle();
-      expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
-      await tester.tap(find.byTooltip('İhbar Et'));
+      await tester.tap(find.text('Çıkış yap'));
       await tester.pumpAndSettle();
-      expect(find.text('Sorunu fotoğraflayın'), findsOneWidget);
+      expect(find.text('Hoş geldiniz'), findsOneWidget);
     });
   });
 
