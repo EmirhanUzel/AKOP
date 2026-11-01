@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type SubmitEvent } from 'react'
 import { ApiError, INSTITUTION_API, request } from '../../core/api/http'
+import ManagerForm from './ManagerForm'
 import './OrganizationsPage.css'
 
 type Organization = {
@@ -29,6 +30,9 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
 
   const [newType, setNewType] = useState('')
   const [typeError, setTypeError] = useState('')
+
+  const [managerFor, setManagerFor] = useState<Organization | null>(null)
+  const [notice, setNotice] = useState('')
 
   // Süresi dolan ya da geçersiz token: girişe dön
   const messageOf = useCallback(
@@ -170,8 +174,23 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
           </form>
         </section>
 
+        {managerFor && (
+          <ManagerForm
+            key={managerFor.id}
+            token={token}
+            organization={managerFor}
+            toMessage={messageOf}
+            onCancel={() => setManagerFor(null)}
+            onDone={() => {
+              setNotice(`${managerFor.name} için yönetici hesabı oluşturuldu.`)
+              setManagerFor(null)
+            }}
+          />
+        )}
+
         <section className="org-card" aria-labelledby="list-title">
           <h2 id="list-title">Kayıtlı kurumlar</h2>
+          {notice && <p className="org-notice" role="status">{notice}</p>}
           {loading && <p className="org-note">Yükleniyor…</p>}
           {loadError && <p className="org-form-error" role="alert">{loadError}</p>}
           {!loading && !loadError && organizations.length === 0 && (
@@ -186,6 +205,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
                     <th>Tür</th>
                     <th>Şehir</th>
                     <th>Eklenme</th>
+                    <th><span className="org-sr">İşlemler</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,6 +218,18 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
                       <td>{o.organizationTypeName}</td>
                       <td>{o.city}</td>
                       <td>{new Date(o.createdAt).toLocaleDateString('tr-TR')}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="org-secondary"
+                          onClick={() => {
+                            setNotice('')
+                            setManagerFor(o)
+                          }}
+                        >
+                          Yönetici ekle
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

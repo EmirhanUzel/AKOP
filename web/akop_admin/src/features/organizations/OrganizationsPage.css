@@ -194,6 +194,38 @@
   color: var(--color-secondary);
 }
 
+.org-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+}
+
+.org-actions .org-secondary {
+  height: 44px;
+}
+
+.org-notice {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--color-success);
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 8px;
+}
+
+.org-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.org-table td .org-secondary {
+  white-space: nowrap;
+}
+
 .org-table-wrap {
   overflow-x: auto;
 }
