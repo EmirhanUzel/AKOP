@@ -46,6 +46,7 @@
 }
 
 .admin-signout {
+  margin-left: auto;
   height: 36px;
   padding: 0 14px;
   font: inherit;

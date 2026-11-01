@@ -1,0 +1,26 @@
+.kurum-info {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 12px 24px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.kurum-info dt {
+  color: var(--color-secondary);
+}
+
+.kurum-info dd {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .kurum-info {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .kurum-info dd {
+    margin-bottom: 12px;
+  }
+}
