@@ -43,6 +43,26 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("me/password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null)
+        {
+            return Unauthorized("Kullanıcı bulunamadı.");
+        }
+
+        var result = await _userService.ChangePasswordAsync(userId, dto);
+
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors);
+        }
+
+        return NoContent();
+    }
+
     [HttpPost("institution")]
     [Authorize(Policy = AuthorizationPolicyNames.SystemAdminOnly)]
     public async Task<IActionResult> CreateInstitutionUser([FromBody] CreateInstitutionUserDto dto)

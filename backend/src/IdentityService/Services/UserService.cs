@@ -3,6 +3,7 @@ using IdentityService.Models;
 using IdentityService.DTOs;
 using IdentityService.Data;
 using IdentityService.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Services;
 
@@ -123,4 +124,48 @@ public class UserService
         return await CreateInstitutionUserAsync(institutionUserDto);
     }
 
+
+    public async Task<IdentityResult> ChangePasswordAsync(string userId, ChangePasswordDto dto)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return IdentityResult.Failed(new IdentityError
+            {
+                Code = "UserNotFound",
+                Description = "Kullanıcı bulunamadı."
+            });
+        }
+
+        await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+        var result = await _userManager.ChangePasswordAsync(
+            user,
+            dto.CurrentPassword,
+            dto.NewPassword
+        );
+
+        if (!result.Succeeded)
+        {
+            await transaction.RollbackAsync();
+            return result;
+        }
+
+        var nowUtc = DateTime.UtcNow;
+
+        await _dbContext.RefreshTokens
+            .Where(refreshToken =>
+                refreshToken.UserId == user.Id &&
+                refreshToken.RevokedAtUtc == null &&
+                refreshToken.ExpiresAtUtc > nowUtc)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(
+                    refreshToken => refreshToken.RevokedAtUtc,
+                    (DateTime?)nowUtc
+                ));
+
+        await transaction.CommitAsync();
+        return result;
+    }
 }
