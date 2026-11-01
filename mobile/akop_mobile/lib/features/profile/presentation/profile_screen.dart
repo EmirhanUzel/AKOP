@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../auth/application/auth_controller.dart';
@@ -41,6 +42,14 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 32),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.lock_outline, color: AppColors.navy),
+            title: const Text('Parola değiştir'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.push('/profil/sifre'),
+          ),
+          const Divider(height: 32),
           OutlinedButton.icon(
             onPressed: ref.read(authControllerProvider.notifier).signOut,
             icon: const Icon(Icons.logout),
