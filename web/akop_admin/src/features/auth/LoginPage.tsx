@@ -1,4 +1,6 @@
 import { useState, type SubmitEvent } from 'react'
+import { IDENTITY_API, request } from '../../core/api/http'
+import type { Session } from './session'
 import './LoginPage.css'
 
 type Errors = { email?: string; password?: string }
@@ -13,19 +15,40 @@ function EyeIcon({ off }: { off: boolean }) {
   )
 }
 
-export default function LoginPage() {
+export default function LoginPage({ onLoggedIn }: { onLoggedIn: (session: Session) => void }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
+  const [formError, setFormError] = useState('')
+  const [busy, setBusy] = useState(false)
 
-  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const next: Errors = {}
     if (!email.trim()) next.email = 'E-posta zorunludur.'
     if (!password) next.password = 'Şifre zorunludur.'
     setErrors(next)
-    // shortcut: backend bağlantısı yok, geçerli form şimdilik bir şey yapmaz; /api/Auth/login bağlanınca burada çağrılır
+    setFormError('')
+    if (next.email || next.password) return
+
+    setBusy(true)
+    try {
+      const res = await request<{ accessToken: string; role: string }>(`${IDENTITY_API}/Auth/login`, {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim(), password }),
+      })
+      // Şimdilik yalnızca sistem yöneticisi ekranları var
+      if (res.role !== 'SystemAdmin') {
+        setFormError('Bu hesabın panele erişimi yok.')
+        return
+      }
+      onLoggedIn({ token: res.accessToken, role: res.role })
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Giriş yapılamadı.')
+    } finally {
+      setBusy(false)
+    }
   }
 
   return (
@@ -76,7 +99,11 @@ export default function LoginPage() {
         </div>
         {errors.password && <span id="password-error" className="login-error">{errors.password}</span>}
 
-        <button type="submit" className="login-submit">Giriş yap</button>
+        {formError && <p className="login-form-error" role="alert">{formError}</p>}
+
+        <button type="submit" className="login-submit" disabled={busy}>
+          {busy ? 'Giriş yapılıyor…' : 'Giriş yap'}
+        </button>
 
         <p className="login-footnote">
           Hesabınız yok mu? Kurum hesapları sistem yöneticisi tarafından oluşturulur.
