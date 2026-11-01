@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 // Servislerde CORS yok; geliştirmede istekler Vite üzerinden aynı origin'den geçer.
 const proxy = (target: string, prefix: string) => ({
@@ -16,5 +16,9 @@ export default defineConfig({
       '/identity': proxy('http://localhost:5101', '/identity'),
       '/institution': proxy('http://localhost:5102', '/institution'),
     },
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
   },
 })

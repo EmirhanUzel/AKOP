@@ -1,5 +1,6 @@
 import { useState, type SubmitEvent } from 'react'
 import { IDENTITY_API, request } from '../../core/api/http'
+import { LOGIN_COPY, type LoginKind } from './loginKinds'
 import type { Session } from './session'
 import './LoginPage.css'
 
@@ -15,7 +16,8 @@ function EyeIcon({ off }: { off: boolean }) {
   )
 }
 
-export default function LoginPage({ onLoggedIn }: { onLoggedIn: (session: Session) => void }) {
+export default function LoginPage({ kind, onLoggedIn }: { kind: LoginKind; onLoggedIn: (session: Session) => void }) {
+  const copy = LOGIN_COPY[kind]
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -38,9 +40,8 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (session: Sessio
         method: 'POST',
         body: JSON.stringify({ email: email.trim(), password }),
       })
-      // Şimdilik yalnızca sistem yöneticisi ekranları var
-      if (res.role !== 'SystemAdmin') {
-        setFormError('Bu hesabın panele erişimi yok.')
+      if (res.role !== copy.role) {
+        setFormError(copy.denied)
         return
       }
       onLoggedIn({ token: res.accessToken, role: res.role })
@@ -54,15 +55,13 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (session: Sessio
   return (
     <main className="login-page">
       <div className="login-brand">
-        <div className="login-wordmark">
-          AKOP<span className="login-accent" aria-hidden="true" />
-        </div>
+        <img className="login-logo" src="/akop-logo.png" alt="AKOP" />
         <p>Vatandaş bildirimlerini tek yerden yönetin.</p>
       </div>
 
       <form className="login-card" onSubmit={handleSubmit} noValidate>
-        <h1>Kurum girişi</h1>
-        <p className="login-lead">Hesabınızla oturum açın.</p>
+        <h1>{copy.title}</h1>
+        <p className="login-lead">{copy.lead}</p>
 
         <label htmlFor="email">E-posta</label>
         <input
@@ -105,9 +104,7 @@ export default function LoginPage({ onLoggedIn }: { onLoggedIn: (session: Sessio
           {busy ? 'Giriş yapılıyor…' : 'Giriş yap'}
         </button>
 
-        <p className="login-footnote">
-          Hesabınız yok mu? Kurum hesapları sistem yöneticisi tarafından oluşturulur.
-        </p>
+        <p className="login-footnote">{copy.footnote}</p>
       </form>
     </main>
   )
