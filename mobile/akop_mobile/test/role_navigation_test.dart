@@ -98,6 +98,33 @@ void main() {
     });
   });
 
+  group('mesajlar', () {
+    testApp('vatandaş Mesajlar sekmesini açar ve İhbarlarım sekmesine döner', (tester) async {
+      await _pumpApp(tester);
+      await _login(tester, 'citizen@akop.test');
+      await tester.tap(find.text('Mesajlar'));
+      await tester.pumpAndSettle();
+      expect(find.text('Henüz mesajınız yok'), findsOneWidget);
+      expect(find.text('Henüz ihbarınız yok'), findsNothing);
+
+      await tester.tap(find.text('İhbarlarım'));
+      await tester.pumpAndSettle();
+      expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
+    });
+
+    testApp('saha personeli de Mesajlar sekmesini açar', (tester) async {
+      await _pumpApp(tester);
+      await _login(tester, 'fieldstaff@akop.test');
+      await tester.tap(find.text('Mesajlar'));
+      await tester.pumpAndSettle();
+      expect(find.text('Henüz mesajınız yok'), findsOneWidget);
+
+      await tester.tap(find.text('Profil'));
+      await tester.pumpAndSettle();
+      expect(find.text('Saha personeli'), findsOneWidget);
+    });
+  });
+
   group('saha personeli', () {
     testApp('görevler ekranı açılır, İhbar Et butonu yoktur', (tester) async {
       await _pumpApp(tester);

@@ -6,8 +6,8 @@ import '../../core/theme/app_colors.dart';
 import '../auth/application/auth_controller.dart';
 import '../auth/data/auth_repository.dart';
 
-/// Alt menü kabuğu. Vatandaş: İhbarlarım • İhbar Et (ortada) • Profil.
-/// Saha personeli ihbar açmaz: Görevler • Profil.
+/// Alt menü kabuğu. Sekmeler: ilk sekme • Mesajlar • Profil.
+/// Vatandaşta ilk sekme İhbarlarım ve ortada İhbar Et butonu var; saha personelinde ilk sekme Görevler.
 class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.navigationShell});
 
@@ -19,6 +19,15 @@ class AppShell extends ConsumerWidget {
     final canReport = role != UserRole.fieldStaff;
     final index = navigationShell.currentIndex;
     void open(int i) => navigationShell.goBranch(i, initialLocation: i == index);
+
+    final home = _NavItem(
+      icon: canReport ? Icons.assignment : Icons.engineering,
+      label: canReport ? 'İhbarlarım' : 'Görevler',
+      selected: index == 0,
+      onTap: () => open(0),
+    );
+    final messages = _NavItem(icon: Icons.chat_bubble_outline, label: 'Mesajlar', selected: index == 1, onTap: () => open(1));
+    final profile = _NavItem(icon: Icons.person_outline, label: 'Profil', selected: index == 2, onTap: () => open(2));
 
     return Scaffold(
       body: navigationShell,
@@ -40,29 +49,25 @@ class AppShell extends ConsumerWidget {
           top: false,
           child: SizedBox(
             height: 72,
-            child: Row(
-              children: [
-                Expanded(
-                  child: _NavItem(
-                    icon: canReport ? Icons.assignment : Icons.engineering,
-                    label: canReport ? 'İhbarlarım' : 'Görevler',
-                    selected: index == 0,
-                    onTap: () => open(0),
-                  ),
-                ),
-                if (canReport)
-                  const Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 10),
-                        child: Text('İhbar Et', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.navy)),
+            child: canReport
+                // Ortadaki buton için boşluk: solda İhbarlarım ve Mesajlar, sağda Profil
+                ? Row(
+                    children: [
+                      Expanded(child: Row(children: [Expanded(child: home), Expanded(child: messages)])),
+                      const SizedBox(
+                        width: 72,
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Text('İhbar Et', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.navy)),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                Expanded(child: _NavItem(icon: Icons.person_outline, label: 'Profil', selected: index == 1, onTap: () => open(1))),
-              ],
-            ),
+                      Expanded(child: Row(children: [Expanded(child: profile)])),
+                    ],
+                  )
+                : Row(children: [Expanded(child: home), Expanded(child: messages), Expanded(child: profile)]),
           ),
         ),
       ),

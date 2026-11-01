@@ -10,6 +10,7 @@ import '../../features/reports/presentation/new_report/detail_step.dart';
 import '../../features/reports/presentation/new_report/location_step.dart';
 import '../../features/reports/presentation/new_report/photo_step.dart';
 import '../../features/reports/presentation/new_report/summary_step.dart';
+import '../../features/messages/presentation/messages_screen.dart';
 import '../../features/profile/presentation/change_password_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/shell/app_shell.dart';
@@ -44,6 +45,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, _, shell) => AppShell(navigationShell: shell),
         branches: [
           StatefulShellBranch(routes: [GoRoute(path: '/', builder: (_, _) => const RoleHome())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/mesajlar', builder: (_, _) => const MessagesScreen())]),
           StatefulShellBranch(routes: [GoRoute(path: '/profil', builder: (_, _) => const ProfileScreen())]),
         ],
       ),
