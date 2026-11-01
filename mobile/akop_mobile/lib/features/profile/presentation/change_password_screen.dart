@@ -40,9 +40,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     try {
       final changed = await ref.read(authControllerProvider.notifier).changePassword(_current.text, _next.text);
       if (!changed) error = 'Mevcut parola hatalı.';
-    } on UnsupportedError {
-      // Backend'de uç nokta hazır olana kadar
-      error = 'Parola değiştirme henüz sunucuya bağlı değil.';
+    } on PasswordRejected catch (e) {
+      error = e.messages.isEmpty ? 'Parola değiştirilemedi. Yeni parolayı kontrol edin.' : e.messages.join(' ');
     } on NetworkFailure {
       error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip tekrar deneyin.';
     }

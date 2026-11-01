@@ -8,12 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Backend'deki gibi: parola değiştirme uç noktası henüz yok.
-class _NoEndpointRepository extends FakeAuthRepository {
-  _NoEndpointRepository() : super(delay: Duration.zero);
+/// Sunucu yeni parolayı kurala uymadığı için reddeder.
+class _RejectingRepository extends FakeAuthRepository {
+  _RejectingRepository() : super(delay: Duration.zero);
 
   @override
-  Future<void> changePassword(String email, String current, String next) => throw UnsupportedError('yok');
+  Future<void> changePassword(String email, String current, String next) =>
+      throw PasswordRejected(['Parola en az bir büyük harf içermeli.', 'Parola en az bir rakam içermeli.']);
 }
 
 Future<void> _pumpApp(WidgetTester tester, AuthRepository repo) async {
@@ -125,11 +126,12 @@ void main() {
     expect(find.text('Henüz ihbarınız yok'), findsOneWidget);
   });
 
-  testApp('backend uç noktası yokken bağlı değil mesajı gösterir', (tester) async {
-    await _pumpApp(tester, _NoEndpointRepository());
+  testApp('sunucu yeni parolayı reddederse kural mesajları gösterilir', (tester) async {
+    await _pumpApp(tester, _RejectingRepository());
     await _login(tester);
     await _openChangePassword(tester);
-    await _fill(tester, '123456', 'Yeni123!', 'Yeni123!');
-    expect(find.text('Parola değiştirme henüz sunucuya bağlı değil.'), findsOneWidget);
+    await _fill(tester, '123456', 'yeni', 'yeni');
+    expect(find.text('Parola en az bir büyük harf içermeli. Parola en az bir rakam içermeli.'), findsOneWidget);
+    expect(find.text('Parolayı değiştir'), findsOneWidget);
   });
 }

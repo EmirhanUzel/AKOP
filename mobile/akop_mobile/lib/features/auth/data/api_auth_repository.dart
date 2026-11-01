@@ -52,10 +52,16 @@ class ApiAuthRepository implements AuthRepository {
     return signIn(email, password);
   }
 
-  /// Backend'de henüz parola değiştirme uç noktası yok.
+  /// PUT /api/Users/me/password. Sunucu başarıda kullanıcının tüm refresh token'larını iptal eder;
+  /// yeni parolayla yeniden giriş yapılıp token'lar yenilenir ki oturum düşmesin.
   @override
-  Future<void> changePassword(String email, String current, String next) =>
-      throw UnsupportedError('Parola değiştirme backend\'de henüz yok');
+  Future<void> changePassword(String email, String current, String next) async {
+    final res = await _call(() => _dio.put<dynamic>('/api/Users/me/password', data: {'currentPassword': current, 'newPassword': next}));
+    if (res.statusCode == 400) throw _passwordFailure(res.data);
+    _ok(res);
+    final login = await _call(() => _dio.post<dynamic>('/api/Auth/login', data: {'email': email, 'password': next}));
+    await _storeTokens(_ok(login));
+  }
 
   @override
   Future<AuthUser?> restoreSession() async {
@@ -153,6 +159,18 @@ class ApiAuthRepository implements AuthRepository {
     if (code < 200 || code >= 300) throw NetworkFailure();
     final data = res.data;
     return data is Map<String, dynamic> ? data : <String, dynamic>{};
+  }
+
+  /// Yanlış mevcut parola -> [InvalidCredentials]; diğer IdentityError'lar -> [PasswordRejected].
+  Exception _passwordFailure(dynamic data) {
+    final messages = <String>[];
+    if (data is List) {
+      for (final e in data) {
+        if (e is Map && e['code'] == 'PasswordMismatch') return InvalidCredentials();
+        if (e is Map && e['description'] is String) messages.add(_turkish[e['code']] ?? e['description'] as String);
+      }
+    }
+    return PasswordRejected(messages);
   }
 
   /// IdentityError listesi ya da ASP.NET doğrulama hatası -> [EmailTaken] / [RegisterRejected].

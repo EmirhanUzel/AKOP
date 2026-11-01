@@ -38,6 +38,13 @@ class RegisterRejected implements Exception {
   final List<String> messages;
 }
 
+/// Parola değişikliği sunucu tarafından reddedildi (ör. parola kuralı); [messages] kullanıcıya gösterilir.
+class PasswordRejected implements Exception {
+  PasswordRejected(this.messages);
+
+  final List<String> messages;
+}
+
 /// Sunucuya ulaşılamadı ya da sunucu hata verdi.
 class NetworkFailure implements Exception {}
 
@@ -49,7 +56,7 @@ abstract interface class AuthRepository {
   /// Başarılıysa kullanıcı giriş yapmış olarak döner.
   Future<AuthUser> register(String firstName, String lastName, String email, String password);
 
-  /// Mevcut parola yanlışsa [InvalidCredentials] fırlatır.
+  /// Mevcut parola yanlışsa [InvalidCredentials], yeni parola kurala uymuyorsa [PasswordRejected] fırlatır.
   Future<void> changePassword(String email, String current, String next);
 
   /// Telefonda saklı refresh token ile oturumu sessizce açar; token yoksa, geçersizse

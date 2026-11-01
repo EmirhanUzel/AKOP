@@ -57,6 +57,42 @@ void main() {
     }
   });
 
+  test('parola değiştirme: PUT atar, sonra yeni parolayla giriş yapıp tokenları yeniler', () async {
+    final (repo, adapter) = _repo({'PUT /api/Users/me/password': (204, null), 'POST /api/Auth/login': _loginOk});
+    await repo.changePassword('ali@akop.test', 'Eski1!', 'Yeni1!x');
+    expect(adapter.calls.map((c) => '${c.method} ${c.path}'), ['PUT /api/Users/me/password', 'POST /api/Auth/login']);
+    expect(adapter.calls.first.data, {'currentPassword': 'Eski1!', 'newPassword': 'Yeni1!x'});
+    expect(adapter.calls.last.data, {'email': 'ali@akop.test', 'password': 'Yeni1!x'});
+  });
+
+  test('parola değiştirme: yanlış mevcut parola InvalidCredentials verir ve yeniden giriş yapmaz', () async {
+    final (repo, adapter) = _repo({
+      'PUT /api/Users/me/password': (400, [
+        {'code': 'PasswordMismatch', 'description': 'Incorrect password.'},
+      ]),
+    });
+    await expectLater(repo.changePassword('a@b.co', 'yanlis', 'Yeni1!x'), throwsA(isA<InvalidCredentials>()));
+    expect(adapter.calls, hasLength(1));
+  });
+
+  test('parola değiştirme: parola kuralı hataları Türkçe PasswordRejected olur', () async {
+    final (repo, _) = _repo({
+      'PUT /api/Users/me/password': (400, [
+        {'code': 'PasswordRequiresUpper', 'description': 'Passwords must have at least one uppercase (A-Z).'},
+        {'code': 'PasswordTooShort', 'description': 'Passwords must be at least 6 characters.'},
+      ]),
+    });
+    await expectLater(
+      repo.changePassword('a@b.co', 'Eski1!', 'abc'),
+      throwsA(isA<PasswordRejected>().having((e) => e.messages, 'messages', ['Parola en az bir büyük harf içermeli.', 'Parola en az 6 karakter olmalı.'])),
+    );
+  });
+
+  test('parola değiştirme: sunucu kapalıysa NetworkFailure verir', () async {
+    final (repo, _) = _repo({});
+    expect(repo.changePassword('a@b.co', 'Eski1!', 'Yeni1!x'), throwsA(isA<NetworkFailure>()));
+  });
+
   test('giriş: 401 InvalidCredentials verir', () async {
     final (repo, _) = _repo({'POST /api/Auth/login': (401, 'E-posta veya şifre hatalı')});
     expect(repo.signIn('a@b.co', 'x'), throwsA(isA<InvalidCredentials>()));
