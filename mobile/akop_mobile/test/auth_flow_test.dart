@@ -1,6 +1,8 @@
 import 'package:akop_mobile/app.dart';
 import 'package:akop_mobile/features/auth/application/auth_controller.dart';
 import 'package:akop_mobile/features/auth/data/auth_repository.dart';
+import 'package:akop_mobile/features/reports/application/report_providers.dart';
+import 'package:akop_mobile/features/reports/data/report_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,7 @@ Future<void> _pumpApp(WidgetTester tester) async {
     ProviderScope(
       overrides: [
         authRepositoryProvider.overrideWithValue(FakeAuthRepository(delay: Duration.zero)),
+        reportRepositoryProvider.overrideWithValue(FakeReportRepository(reports: const [])),
       ],
       child: const AkopApp(),
     ),
