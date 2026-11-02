@@ -7,6 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 using ReportService.Constants;
 using ReportService.Data;
 
+using ReportService.Repositories;
+using ReportService.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Controller servisleri
@@ -21,6 +25,9 @@ builder.Services.AddDbContext<ReportDbContext>(options =>
         builder.Configuration.GetConnectionString("ReportDb")
     )
 );
+
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IReportService, ReportService.Services.ReportService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT anahtarı bulunamadı.");

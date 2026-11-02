@@ -10,6 +10,7 @@ public class Report
     public string? CategoryCode { get; set; }
     public double Latitude {get; set;}
     public double Longitude {get; set;}
+    public string? LocationDescription { get; set; }
     public ReportStatus Status {get;set;} = ReportStatus.Pending;
     public DateTime CreatedAt {get;set;} = DateTime.UtcNow;
 

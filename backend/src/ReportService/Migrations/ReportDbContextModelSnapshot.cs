@@ -48,6 +48,10 @@ namespace ReportService.Migrations
                     b.Property<double>("Latitude")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("LocationDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
                     b.Property<double>("Longitude")
                         .HasColumnType("double precision");
 
