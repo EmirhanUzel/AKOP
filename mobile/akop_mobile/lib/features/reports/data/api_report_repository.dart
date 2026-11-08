@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
@@ -50,6 +52,13 @@ class ApiReportRepository implements ReportRepository {
     _ok(res);
   }
 
+  /// Fotoğraf `Authorization` ister: istek paylaşılan Dio'dan geçtiği için token oradan eklenir.
+  @override
+  Future<Uint8List> image(String path) async {
+    final res = await _call(() => _dio.get<List<int>>('$_baseUrl$path', options: Options(responseType: ResponseType.bytes)));
+    return Uint8List.fromList((_ok(res) as List).cast<int>());
+  }
+
   Report _report(Map<String, dynamic> j) {
     final title = j['title'] as String?;
     final code = j['categoryCode'] as String?;
@@ -62,6 +71,8 @@ class ApiReportRepository implements ReportRepository {
       createdAt: DateTime.parse(j['createdAt'] as String).toLocal(),
       locationText: place ?? '${(j['latitude'] as num).toStringAsFixed(5)}, ${(j['longitude'] as num).toStringAsFixed(5)}',
       categoryCode: code,
+      description: j['description'] as String? ?? '',
+      imageUrls: [...?(j['imageUrls'] as List?)?.whereType<String>()],
     );
   }
 

@@ -17,6 +17,8 @@ class Report {
     required this.createdAt,
     required this.locationText,
     this.categoryCode,
+    this.description = '',
+    this.imageUrls = const [],
   });
 
   final String id;
@@ -25,4 +27,8 @@ class Report {
   final DateTime createdAt;
   final String locationText;
   final String? categoryCode;
+  final String description;
+
+  /// Sunucudaki göreli fotoğraf adresleri; [ReportRepository.image] ile indirilir.
+  final List<String> imageUrls;
 }

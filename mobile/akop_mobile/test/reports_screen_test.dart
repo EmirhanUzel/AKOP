@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:akop_mobile/app.dart';
 import 'package:akop_mobile/features/auth/application/auth_controller.dart';
 import 'package:akop_mobile/features/auth/data/auth_repository.dart';
@@ -22,6 +24,9 @@ class _FailingRepository implements ReportRepository {
 
   @override
   Future<void> create(NewReport report) async {}
+
+  @override
+  Future<Uint8List> image(String path) async => Uint8List(0);
 }
 
 Future<void> _pumpHome(WidgetTester tester, ReportRepository reports) async {

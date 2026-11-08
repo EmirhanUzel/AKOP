@@ -57,6 +57,26 @@ void main() {
     expect(list[1].locationText, '39.90000, 32.80000');
   });
 
+  test('liste: açıklama ve fotoğraf adreslerini alır', () async {
+    final (repo, _) = _repo({
+      'GET http://report/api/Reports/mine': (200, [
+        {'id': 'a', 'title': 'T', 'description': 'Çukur var', 'categoryCode': null, 'latitude': 39.9, 'longitude': 32.8, 'locationDescription': null, 'status': 'Pending', 'createdAt': '2026-11-01T10:00:00Z', 'imageUrls': ['/api/Reports/a/images/1', '/api/Reports/a/images/2']},
+        {'id': 'b', 'title': 'T', 'description': 'x', 'categoryCode': null, 'latitude': 39.9, 'longitude': 32.8, 'locationDescription': null, 'status': 'Pending', 'createdAt': '2026-11-02T10:00:00Z'},
+      ]),
+    });
+    final list = await repo.myReports();
+    expect(list.last.description, 'Çukur var');
+    expect(list.last.imageUrls, ['/api/Reports/a/images/1', '/api/Reports/a/images/2']);
+    expect(list.first.imageUrls, isEmpty); // imageUrls gelmezse boş liste
+  });
+
+  test('fotoğraf: göreli adresi ReportService adresiyle birleştirip bayt olarak ister', () async {
+    final (repo, adapter) = _repo({'GET http://report/api/Reports/a/images/1': (200, 'resim')});
+    final bytes = await repo.image('/api/Reports/a/images/1');
+    expect(bytes, isNotEmpty);
+    expect(adapter.calls.single.responseType, ResponseType.bytes);
+  });
+
   test('liste: sunucu hatası NetworkFailure olur', () async {
     final (repo, _) = _repo({'GET http://report/api/Reports/mine': (401, null)});
     expect(repo.myReports(), throwsA(isA<NetworkFailure>()));

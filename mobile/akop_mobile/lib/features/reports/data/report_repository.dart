@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import '../domain/new_report.dart';
 import '../domain/report.dart';
 
@@ -14,6 +16,9 @@ abstract interface class ReportRepository {
 
   /// İhbarı fotoğraflarıyla tek istekte oluşturur: ya hep birlikte oluşur ya hiç.
   Future<void> create(NewReport report);
+
+  /// [Report.imageUrls] içindeki bir fotoğrafın baytları.
+  Future<Uint8List> image(String path);
 }
 
 /// ReportService API'si hazır olana kadar kullanılan sahte sürüm: tek örnek ihbar döner.
@@ -43,4 +48,7 @@ class FakeReportRepository implements ReportRepository {
 
   @override
   Future<void> create(NewReport report) => Future<void>.delayed(delay);
+
+  @override
+  Future<Uint8List> image(String path) async => Uint8List(0);
 }
