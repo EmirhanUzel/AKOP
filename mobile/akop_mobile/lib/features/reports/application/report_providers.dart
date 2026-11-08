@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/api_config.dart';
+import '../../auth/application/auth_controller.dart';
+import '../data/api_report_repository.dart';
 import '../data/report_repository.dart';
 import '../domain/report.dart';
 
-final reportRepositoryProvider = Provider<ReportRepository>((ref) => FakeReportRepository());
+final reportRepositoryProvider = Provider<ReportRepository>((ref) => ApiReportRepository(ref.watch(apiDioProvider), reportApiBaseUrl));
 
 /// Otomatik yeniden deneme kapalı: hata ekranındaki "Tekrar dene" düğmesi bu işi yapar.
 final myReportsProvider = FutureProvider.autoDispose<List<Report>>(

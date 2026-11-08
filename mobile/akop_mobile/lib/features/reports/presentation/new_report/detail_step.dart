@@ -20,11 +20,13 @@ class _DetailStepState extends ConsumerState<DetailStep> {
   final _formKey = GlobalKey<FormState>();
   late final _description = TextEditingController(text: ref.read(draftProvider).description);
   late final _title = TextEditingController(text: ref.read(draftProvider).title);
+  late final _place = TextEditingController(text: ref.read(draftProvider).locationDescription);
 
   @override
   void dispose() {
     _description.dispose();
     _title.dispose();
+    _place.dispose();
     super.dispose();
   }
 
@@ -80,6 +82,14 @@ class _DetailStepState extends ConsumerState<DetailStep> {
               maxLength: 120,
               onChanged: draft.setTitle,
               decoration: const InputDecoration(hintText: 'Örn. Kaldırım taşları kırık'),
+            ),
+            const SizedBox(height: 8),
+            const FieldLabel('Adres tarifi', optional: true),
+            TextFormField(
+              controller: _place,
+              maxLength: 300,
+              onChanged: draft.setLocationDescription,
+              decoration: const InputDecoration(hintText: 'Örn. Okul girişinin karşısı'),
             ),
             const SizedBox(height: 8),
             const FieldLabel('Kategori', optional: true),

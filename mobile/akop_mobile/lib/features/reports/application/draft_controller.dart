@@ -15,6 +15,7 @@ class ReportDraft {
     this.description = '',
     this.title = '',
     this.categoryCode,
+    this.locationDescription = '',
   });
 
   final List<String> photos;
@@ -22,6 +23,7 @@ class ReportDraft {
   final String description;
   final String title;
   final String? categoryCode;
+  final String locationDescription;
 
   ReportDraft copyWith({
     List<String>? photos,
@@ -29,6 +31,7 @@ class ReportDraft {
     String? description,
     String? title,
     String? categoryCode,
+    String? locationDescription,
     bool clearCategory = false,
   }) =>
       ReportDraft(
@@ -37,6 +40,7 @@ class ReportDraft {
         description: description ?? this.description,
         title: title ?? this.title,
         categoryCode: clearCategory ? null : (categoryCode ?? this.categoryCode),
+        locationDescription: locationDescription ?? this.locationDescription,
       );
 
   NewReport toNewReport() {
@@ -48,6 +52,7 @@ class ReportDraft {
       description: description.trim(),
       title: title.trim().isEmpty ? null : title.trim(),
       categoryCode: categoryCode,
+      locationDescription: locationDescription.trim().isEmpty ? null : locationDescription.trim(),
     );
   }
 }
@@ -71,6 +76,8 @@ class DraftController extends Notifier<ReportDraft> {
   void setDescription(String v) => state = state.copyWith(description: v);
 
   void setTitle(String v) => state = state.copyWith(title: v);
+
+  void setLocationDescription(String v) => state = state.copyWith(locationDescription: v);
 
   void setCategory(String? code) =>
       state = code == null ? state.copyWith(clearCategory: true) : state.copyWith(categoryCode: code);

@@ -7,6 +7,7 @@ class NewReport {
     required this.description,
     this.title,
     this.categoryCode,
+    this.locationDescription,
   });
 
   final List<String> photos;
@@ -15,4 +16,5 @@ class NewReport {
   final String description;
   final String? title;
   final String? categoryCode;
+  final String? locationDescription;
 }

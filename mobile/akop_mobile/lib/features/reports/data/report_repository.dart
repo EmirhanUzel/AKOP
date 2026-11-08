@@ -1,8 +1,15 @@
+import '../domain/new_report.dart';
 import '../domain/report.dart';
+
+/// İhbar oluşturuldu ama fotoğraflar yüklenemedi; ihbar listede görünür.
+class PhotoUploadFailed implements Exception {}
 
 abstract interface class ReportRepository {
   /// Giriş yapan vatandaşın ihbarları, yeniden eskiye.
   Future<List<Report>> myReports();
+
+  /// İhbarı oluşturur, sonra fotoğraflarını yükler.
+  Future<void> create(NewReport report);
 }
 
 /// ReportService API'si hazır olana kadar kullanılan sahte sürüm: tek örnek ihbar döner.
@@ -29,4 +36,7 @@ class FakeReportRepository implements ReportRepository {
           ),
         ];
   }
+
+  @override
+  Future<void> create(NewReport report) => Future<void>.delayed(delay);
 }
