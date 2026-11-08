@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import '../../auth/data/auth_repository.dart';
 import '../domain/new_report.dart';
@@ -6,14 +7,25 @@ import '../domain/report.dart';
 import '../domain/report_category.dart';
 import 'report_repository.dart';
 
-/// ReportService ile konuşur: GET /api/Reports/mine, POST /api/Reports ve
-/// POST /api/Reports/{id}/images (multipart, her fotoğraf `files` alanında).
+/// Fotoğrafı yükleme biçimine çevirir; testlerde telefon eklentisi olmadan değiştirilir.
+typedef PhotoEncoder = Future<MultipartFile> Function(String path);
+
+/// Sunucu HEIC/HEIF kabul etmez: fotoğraf JPEG'e çevrilir, uzun kenar 1920 px'e, kalite %80'e indirilir.
+Future<MultipartFile> jpegPart(String path) async {
+  final bytes = await FlutterImageCompress.compressWithFile(path, minWidth: 1920, minHeight: 1920, quality: 80);
+  if (bytes == null) throw ReportRejected('Fotoğraf işlenemedi. Başka bir fotoğraf deneyin.');
+  return MultipartFile.fromBytes(bytes, filename: 'photo.jpg', contentType: DioMediaType('image', 'jpeg'));
+}
+
+/// ReportService ile konuşur: GET /api/Reports/mine ve POST /api/Reports
+/// (multipart/form-data: metin alanları + `files` alanında 1-5 fotoğraf, tek istekte).
 /// Token ve 401 yenilemesi paylaşılan Dio'daki auth interceptor'ından gelir.
 class ApiReportRepository implements ReportRepository {
-  ApiReportRepository(this._dio, this._baseUrl);
+  ApiReportRepository(this._dio, this._baseUrl, {this._encode = jpegPart});
 
   final Dio _dio;
   final String _baseUrl;
+  final PhotoEncoder _encode;
 
   @override
   Future<List<Report>> myReports() async {
@@ -24,21 +36,18 @@ class ApiReportRepository implements ReportRepository {
 
   @override
   Future<void> create(NewReport r) async {
-    final created = _ok(await _call(() => _dio.post<dynamic>('$_baseUrl/api/Reports', data: {
-          'title': r.title,
-          'description': r.description,
-          'categoryCode': r.categoryCode,
-          'latitude': r.lat,
-          'longitude': r.lng,
-          'locationDescription': r.locationDescription,
-        })));
-    if (r.photos.isEmpty) return;
-    try {
-      final form = FormData.fromMap({'files': [for (final p in r.photos) await MultipartFile.fromFile(p)]});
-      _ok(await _call(() => _dio.post<dynamic>('$_baseUrl/api/Reports/${(created as Map)['id']}/images', data: form)));
-    } on Exception {
-      throw PhotoUploadFailed();
-    }
+    final form = FormData.fromMap({
+      if (r.title != null) 'title': r.title,
+      'description': r.description,
+      if (r.categoryCode != null) 'categoryCode': r.categoryCode,
+      'latitude': r.lat, // Dart double'ı nokta ile yazar (39.92), sunucu bunu bekler
+      'longitude': r.lng,
+      if (r.locationDescription != null) 'locationDescription': r.locationDescription,
+      'files': [for (final p in r.photos) await _encode(p)],
+    });
+    final res = await _call(() => _dio.post<dynamic>('$_baseUrl/api/Reports', data: form));
+    if (res.statusCode == 400) throw ReportRejected(_message(res.data));
+    _ok(res);
   }
 
   Report _report(Map<String, dynamic> j) {
@@ -68,5 +77,23 @@ class ApiReportRepository implements ReportRepository {
     final code = res.statusCode ?? 0;
     if (code < 200 || code >= 300) throw NetworkFailure();
     return res.data;
+  }
+
+  /// Sunucunun 400 gövdesinden (düz metin, ProblemDetails ya da hata listesi) kullanıcıya gösterilecek cümle.
+  String _message(dynamic data) {
+    if (data is String && data.trim().isNotEmpty) return data.trim();
+    if (data is Map) {
+      final errors = data['errors'];
+      if (errors is Map) {
+        for (final v in errors.values) {
+          if (v is List && v.isNotEmpty && v.first is String) return v.first as String;
+        }
+      }
+      if (data['detail'] is String) return data['detail'] as String;
+    }
+    if (data is List && data.isNotEmpty && data.first is Map && (data.first as Map)['description'] is String) {
+      return data.map((e) => (e as Map)['description']).join(' ');
+    }
+    return 'İhbar gönderilemedi. Bilgileri kontrol edin.';
   }
 }

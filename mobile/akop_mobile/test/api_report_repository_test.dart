@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:akop_mobile/features/auth/data/auth_repository.dart';
 import 'package:akop_mobile/features/reports/data/api_report_repository.dart';
@@ -34,7 +33,9 @@ class _FakeAdapter implements HttpClientAdapter {
 (ApiReportRepository, _FakeAdapter) _repo(Map<String, (int, Object?)> routes) {
   final adapter = _FakeAdapter(routes);
   final dio = Dio(BaseOptions(baseUrl: 'http://identity', validateStatus: (s) => s != null && s < 500))..httpClientAdapter = adapter;
-  return (ApiReportRepository(dio, 'http://report'), adapter);
+  // Telefon eklentisi (JPEG çevirme) testte yok; sahte fotoğraf parçası kullanılır
+  Future<MultipartFile> fakePhoto(String _) async => MultipartFile.fromBytes([1, 2, 3], filename: 'photo.jpg');
+  return (ApiReportRepository(dio, 'http://report', encode: fakePhoto), adapter);
 }
 
 const _created = (201, {'id': 'r1', 'status': 'Pending'});
@@ -61,33 +62,35 @@ void main() {
     expect(repo.myReports(), throwsA(isA<NetworkFailure>()));
   });
 
-  test('oluşturma: DTO alanlarını gönderir, fotoğraf yoksa yükleme yapmaz', () async {
+  test('oluşturma: tek multipart istek, alanlar ve fotoğraflar birlikte, boş alanlar atlanır', () async {
     final (repo, adapter) = _repo({'POST http://report/api/Reports': _created});
-    await repo.create(const NewReport(photos: [], lat: 1, lng: 2, description: 'd', categoryCode: 'PARK', locationDescription: 'yer'));
-    expect(adapter.calls, hasLength(1));
-    expect(adapter.calls.single.data, {'title': null, 'description': 'd', 'categoryCode': 'PARK', 'latitude': 1.0, 'longitude': 2.0, 'locationDescription': 'yer'});
+    await repo.create(const NewReport(photos: ['a', 'b'], lat: 39.92, lng: 32.85, description: 'd', categoryCode: 'PARK'));
+    expect(adapter.calls, hasLength(1)); // ayrı /images isteği yok
+    final form = adapter.calls.single.data as FormData;
+    expect(Map.fromEntries(form.fields), {'description': 'd', 'categoryCode': 'PARK', 'latitude': '39.92', 'longitude': '32.85'});
+    expect(form.files.map((f) => f.key), ['files', 'files']);
   });
 
-  test('oluşturma: fotoğrafları yeni ihbarın images ucuna yükler', () async {
-    final dir = await Directory.systemTemp.createTemp('akop');
-    addTearDown(() => dir.delete(recursive: true));
-    final photo = File('${dir.path}/a.jpg')..writeAsBytesSync([1, 2, 3]);
-    final (repo, adapter) = _repo({'POST http://report/api/Reports': _created, 'POST http://report/api/Reports/r1/images': (200, null)});
-    await repo.create(NewReport(photos: [photo.path], lat: 1, lng: 2, description: 'd'));
-    final upload = adapter.calls.last.data as FormData;
-    expect(upload.files.single.key, 'files');
+  test('oluşturma: 400 gövdesindeki mesaj ReportRejected ile gelir', () async {
+    final (repo, _) = _repo({'POST http://report/api/Reports': (400, 'En az bir fotoğraf gerekli.')});
+    await expectLater(
+      repo.create(const NewReport(photos: ['a'], lat: 1, lng: 2, description: 'd')),
+      throwsA(isA<ReportRejected>().having((e) => e.message, 'message', 'En az bir fotoğraf gerekli.')),
+    );
   });
 
-  test('oluşturma: ihbar açılır ama yükleme düşerse PhotoUploadFailed', () async {
-    final dir = await Directory.systemTemp.createTemp('akop');
-    addTearDown(() => dir.delete(recursive: true));
-    final photo = File('${dir.path}/a.jpg')..writeAsBytesSync([1]);
-    final (repo, _) = _repo({'POST http://report/api/Reports': _created, 'POST http://report/api/Reports/r1/images': (404, null)});
-    expect(repo.create(NewReport(photos: [photo.path], lat: 1, lng: 2, description: 'd')), throwsA(isA<PhotoUploadFailed>()));
+  test('oluşturma: 400 ProblemDetails errors haritasından ilk mesajı alır', () async {
+    final (repo, _) = _repo({
+      'POST http://report/api/Reports': (400, {'errors': {'Files': ['Dosya en fazla 10 MB olabilir.']}}),
+    });
+    await expectLater(
+      repo.create(const NewReport(photos: ['a'], lat: 1, lng: 2, description: 'd')),
+      throwsA(isA<ReportRejected>().having((e) => e.message, 'message', 'Dosya en fazla 10 MB olabilir.')),
+    );
   });
 
-  test('oluşturma: ihbar açılamazsa NetworkFailure (PhotoUploadFailed değil)', () async {
-    final (repo, _) = _repo({'POST http://report/api/Reports': (400, null)});
-    expect(repo.create(const NewReport(photos: ['x'], lat: 1, lng: 2, description: 'd')), throwsA(isA<NetworkFailure>()));
+  test('oluşturma: sunucu 5xx ya da kapalıysa NetworkFailure', () async {
+    final (repo, _) = _repo({'POST http://report/api/Reports': (404, null)});
+    expect(repo.create(const NewReport(photos: ['a'], lat: 1, lng: 2, description: 'd')), throwsA(isA<NetworkFailure>()));
   });
 }

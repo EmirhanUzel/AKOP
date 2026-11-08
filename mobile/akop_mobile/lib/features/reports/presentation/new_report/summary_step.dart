@@ -34,21 +34,19 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
   Future<void> _send() async {
     setState(() => _sending = true);
     final messenger = ScaffoldMessenger.of(context);
-    var message = 'İhbarınız gönderildi.';
     try {
       await ref.read(reportRepositoryProvider).create(ref.read(draftProvider).toNewReport());
-    } on PhotoUploadFailed {
-      message = 'İhbarınız gönderildi ama fotoğraflar yüklenemedi.';
-    } on Exception {
+    } on Exception catch (e) {
       if (mounted) setState(() => _sending = false);
-      messenger.showSnackBar(const SnackBar(content: Text('İhbar gönderilemedi. Bağlantınızı kontrol edip tekrar deneyin.')));
+      final text = e is ReportRejected ? e.message : 'İhbar gönderilemedi. Bağlantınızı kontrol edip tekrar deneyin.';
+      messenger.showSnackBar(SnackBar(content: Text(text)));
       return;
     }
     if (!mounted) return;
     ref.read(draftProvider.notifier).reset();
     ref.invalidate(myReportsProvider);
     context.go('/');
-    messenger.showSnackBar(SnackBar(content: Text(message)));
+    messenger.showSnackBar(const SnackBar(content: Text('İhbarınız gönderildi.')));
   }
 
   @override

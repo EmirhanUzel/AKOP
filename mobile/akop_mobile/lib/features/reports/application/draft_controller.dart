@@ -5,7 +5,7 @@ import '../domain/new_report.dart';
 
 const maxPhotos = 5;
 
-/// Ankara merkez; konum izni yoksa harita buradan açılır.
+/// Ankara merkez; konum izni yoksa harita buradan açılır (ihbar konumu olarak kaydedilmez).
 const defaultLocation = LatLng(39.9032, 32.8597);
 
 class ReportDraft {
@@ -43,8 +43,9 @@ class ReportDraft {
         locationDescription: locationDescription ?? this.locationDescription,
       );
 
+  /// Konum seçilmeden çağrılmaz: Konum adımı seçilmeden "Devam"ı kapalı tutar.
   NewReport toNewReport() {
-    final loc = location ?? defaultLocation;
+    final loc = location!;
     return NewReport(
       photos: photos,
       lat: loc.latitude,

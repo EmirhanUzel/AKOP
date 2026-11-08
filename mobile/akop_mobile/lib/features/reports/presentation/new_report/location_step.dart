@@ -28,10 +28,7 @@ class _LocationStepState extends ConsumerState<LocationStep> {
     super.initState();
     Future.microtask(() {
       final draft = ref.read(draftProvider);
-      if (draft.location == null) {
-        ref.read(draftProvider.notifier).setLocation(defaultLocation);
-        _locate();
-      }
+      if (draft.location == null) _locate();
     });
   }
 
@@ -64,12 +61,14 @@ class _LocationStepState extends ConsumerState<LocationStep> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = ref.watch(draftProvider.select((d) => d.location)) ?? defaultLocation;
+    final picked = ref.watch(draftProvider.select((d) => d.location));
+    final loc = picked ?? defaultLocation;
     return StepScaffold(
       step: 2,
       label: 'Konum',
       buttonLabel: 'Devam',
-      onNext: () => context.push('/yeni/detay'),
+      hint: picked == null ? 'Konumunuzu alın ya da haritayı kaydırarak seçin.' : null,
+      onNext: picked == null ? null : () => context.push('/yeni/detay'),
       child: Column(
         children: [
           Expanded(
@@ -138,7 +137,7 @@ class _LocationStepState extends ConsumerState<LocationStep> {
                   children: [
                     const Icon(Icons.place_outlined, size: 20),
                     const SizedBox(width: 8),
-                    Text('${loc.latitude.toStringAsFixed(5)}, ${loc.longitude.toStringAsFixed(5)}', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                    Text(picked == null ? 'Henüz seçilmedi' : '${loc.latitude.toStringAsFixed(5)}, ${loc.longitude.toStringAsFixed(5)}', style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
                   ],
                 ),
                 const SizedBox(height: 4),

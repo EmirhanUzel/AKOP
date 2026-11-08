@@ -1,14 +1,18 @@
 import '../domain/new_report.dart';
 import '../domain/report.dart';
 
-/// İhbar oluşturuldu ama fotoğraflar yüklenemedi; ihbar listede görünür.
-class PhotoUploadFailed implements Exception {}
+/// Sunucu ihbarı reddetti (ör. fotoğraf kuralı); [message] kullanıcıya gösterilir.
+class ReportRejected implements Exception {
+  ReportRejected(this.message);
+
+  final String message;
+}
 
 abstract interface class ReportRepository {
   /// Giriş yapan vatandaşın ihbarları, yeniden eskiye.
   Future<List<Report>> myReports();
 
-  /// İhbarı oluşturur, sonra fotoğraflarını yükler.
+  /// İhbarı fotoğraflarıyla tek istekte oluşturur: ya hep birlikte oluşur ya hiç.
   Future<void> create(NewReport report);
 }
 
