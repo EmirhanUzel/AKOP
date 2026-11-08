@@ -22,9 +22,32 @@ public class ReportRepository : IReportRepository
     {
         return await _reportDbContext.Reports
             .AsNoTracking()
+            .Include(report => report.Images)
             .Where(report => report.CitizenId == citizenId)
             .OrderByDescending(report => report.CreatedAt)
             .ToListAsync();
+    }
+
+    // İhbar yalnızca sahibi olan vatandaşa döner; değilse null
+    public async Task<Report?> GetCitizenReportAsync(Guid reportId, string citizenId)
+    {
+        return await _reportDbContext.Reports
+            .AsNoTracking()
+            .Include(report => report.Images)
+            .FirstOrDefaultAsync(report =>
+                report.Id == reportId &&
+                report.CitizenId == citizenId);
+    }
+
+    // Fotoğraf yalnızca ihbarın sahibi olan vatandaşa döner; değilse null
+    public async Task<ReportImage?> GetCitizenImageAsync(Guid reportId, Guid imageId, string citizenId)
+    {
+        return await _reportDbContext.ReportImages
+            .AsNoTracking()
+            .FirstOrDefaultAsync(image =>
+                image.Id == imageId &&
+                image.ReportId == reportId &&
+                image.Report.CitizenId == citizenId);
     }
 
 

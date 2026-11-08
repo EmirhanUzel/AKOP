@@ -25,4 +25,7 @@ public class CreateReportDto
     [MaxLength(300)]
     public string? LocationDescription {get; set;}
 
+    // Formdaki "files" alanı; sayı, boyut ve tür kontrolü service'te
+    public List<IFormFile> Files { get; set; } = new();
+
 }

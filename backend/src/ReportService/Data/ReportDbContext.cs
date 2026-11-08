@@ -12,6 +12,8 @@ public class ReportDbContext : DbContext
 
     public DbSet<Report> Reports { get; set; } = null!;
 
+    public DbSet<ReportImage> ReportImages { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -50,6 +52,30 @@ public class ReportDbContext : DbContext
                 report.CitizenId,
                 report.CreatedAt
             });
+        });
+
+        modelBuilder.Entity<ReportImage>(entity =>
+        {
+            entity.HasKey(image => image.Id);
+
+            entity.Property(image => image.StorageKey)
+                .IsRequired()
+                .HasMaxLength(300);
+
+            entity.Property(image => image.ContentType)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(image => image.CreatedAt)
+                .IsRequired();
+
+            entity.HasIndex(image => image.StorageKey)
+                .IsUnique();
+
+            entity.HasOne(image => image.Report)
+                .WithMany(report => report.Images)
+                .HasForeignKey(image => image.ReportId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

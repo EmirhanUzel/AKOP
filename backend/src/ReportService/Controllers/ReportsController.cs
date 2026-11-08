@@ -22,7 +22,10 @@ public class ReportsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateReportDto dto)
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(ReportImageLimits.MaxRequestSizeBytes)]
+    [RequestFormLimits(MultipartBodyLengthLimit = ReportImageLimits.MaxRequestSizeBytes)]
+    public async Task<IActionResult> Create([FromForm] CreateReportDto dto)
     {
         var citizenId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -31,9 +34,16 @@ public class ReportsController : ControllerBase
             return Unauthorized();
         }
 
-        var result = await _reportService.CreateAsync(dto, citizenId);
+        try
+        {
+            var result = await _reportService.CreateAsync(dto, citizenId);
 
-        return StatusCode(StatusCodes.Status201Created, result);
+            return StatusCode(StatusCodes.Status201Created, result);
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(exception.Message);
+        }
     }
 
     [HttpGet("mine")]
@@ -49,5 +59,47 @@ public class ReportsController : ControllerBase
         var result = await _reportService.GetMineAsync(citizenId);
 
         return Ok(result);
+    }
+
+    [HttpGet("{reportId:guid}")]
+    public async Task<IActionResult> GetById(Guid reportId)
+    {
+        var citizenId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(citizenId))
+        {
+            return Unauthorized();
+        }
+
+        var result = await _reportService.GetMineByIdAsync(reportId, citizenId);
+
+        // Başkasının ihbarı da 404: ihbarın var olduğu bilgisi sızmaz
+        if (result == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
+    }
+
+    [HttpGet("{reportId:guid}/images/{imageId:guid}")]
+    public async Task<IActionResult> GetImage(Guid reportId, Guid imageId)
+    {
+        var citizenId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(citizenId))
+        {
+            return Unauthorized();
+        }
+
+        var image = await _reportService.GetImageAsync(reportId, imageId, citizenId);
+
+        // Başkasının fotoğrafı da 404: fotoğrafın var olduğu bilgisi sızmaz
+        if (image == null)
+        {
+            return NotFound();
+        }
+
+        return File(image.Content, image.ContentType);
     }
 }

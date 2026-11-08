@@ -30,6 +30,9 @@ coverage/
 *.jks
 *.keystore
 
+# Yüklenen dosyalar (ReportService fotoğrafları)
+**/App_Data/
+
 # Logs
 *.log
 

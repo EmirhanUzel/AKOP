@@ -11,4 +11,7 @@ public class ReportResponseDto
     public string? LocationDescription { get; set; }
     public string Status { get; set; } = "";
     public DateTime CreatedAt { get; set; }
+
+    // Göreli adresler; istemci kendi ReportService adresinin önüne ekler
+    public List<string> ImageUrls { get; set; } = new();
 }
