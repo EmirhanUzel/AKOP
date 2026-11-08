@@ -1,8 +1,24 @@
+import 'dart:typed_data';
+
+import '../domain/new_report.dart';
 import '../domain/report.dart';
+
+/// Sunucu ihbarı reddetti (ör. fotoğraf kuralı); [message] kullanıcıya gösterilir.
+class ReportRejected implements Exception {
+  ReportRejected(this.message);
+
+  final String message;
+}
 
 abstract interface class ReportRepository {
   /// Giriş yapan vatandaşın ihbarları, yeniden eskiye.
   Future<List<Report>> myReports();
+
+  /// İhbarı fotoğraflarıyla tek istekte oluşturur: ya hep birlikte oluşur ya hiç.
+  Future<void> create(NewReport report);
+
+  /// [Report.imageUrls] içindeki bir fotoğrafın baytları.
+  Future<Uint8List> image(String path);
 }
 
 /// ReportService API'si hazır olana kadar kullanılan sahte sürüm: tek örnek ihbar döner.
@@ -29,4 +45,10 @@ class FakeReportRepository implements ReportRepository {
           ),
         ];
   }
+
+  @override
+  Future<void> create(NewReport report) => Future<void>.delayed(delay);
+
+  @override
+  Future<Uint8List> image(String path) async => Uint8List(0);
 }

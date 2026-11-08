@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../application/draft_controller.dart';
+import '../../application/report_providers.dart';
+import '../../data/report_repository.dart';
 import '../../domain/report_category.dart';
 import '../report_map.dart';
 import 'step_scaffold.dart';
@@ -25,8 +28,26 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
     nav.popUntil((_) => n++ >= steps);
   }
 
-  /// Report API'si hazır olana kadar gönderim yok; taslak korunur.
-  void _send() => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('İhbar gönderimi henüz bağlı değil.')));
+  bool _sending = false;
+
+  /// Başarıda taslak silinir ve ana sayfaya dönülür; hatada taslak korunur.
+  Future<void> _send() async {
+    setState(() => _sending = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(reportRepositoryProvider).create(ref.read(draftProvider).toNewReport());
+    } on Exception catch (e) {
+      if (mounted) setState(() => _sending = false);
+      final text = e is ReportRejected ? e.message : 'İhbar gönderilemedi. Bağlantınızı kontrol edip tekrar deneyin.';
+      messenger.showSnackBar(SnackBar(content: Text(text)));
+      return;
+    }
+    if (!mounted) return;
+    ref.read(draftProvider.notifier).reset();
+    ref.invalidate(myReportsProvider);
+    context.go('/');
+    messenger.showSnackBar(const SnackBar(content: Text('İhbarınız gönderildi.')));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +59,7 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
       label: 'Özet',
       buttonLabel: 'Gönder',
       buttonIcon: Icons.send_outlined,
+      busy: _sending,
       onNext: _send,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
@@ -75,6 +97,8 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
                     ),
                   ],
                 ),
+                if (draft.locationDescription.trim().isNotEmpty)
+                  Padding(padding: const EdgeInsets.only(top: 4), child: Text(draft.locationDescription.trim(), style: const TextStyle(color: AppColors.textSecondary))),
               ],
             ),
           ),

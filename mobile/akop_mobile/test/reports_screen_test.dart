@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:akop_mobile/app.dart';
 import 'package:akop_mobile/features/auth/application/auth_controller.dart';
 import 'package:akop_mobile/features/auth/data/auth_repository.dart';
 import 'package:akop_mobile/features/reports/application/report_providers.dart';
 import 'package:akop_mobile/features/reports/data/report_repository.dart';
+import 'package:akop_mobile/features/reports/domain/new_report.dart';
 import 'package:akop_mobile/features/reports/domain/report.dart';
 import 'package:akop_mobile/features/reports/presentation/report_card.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +21,12 @@ class _FailingRepository implements ReportRepository {
     if (failures-- > 0) throw Exception('sunucu yok');
     return FakeReportRepository().myReports();
   }
+
+  @override
+  Future<void> create(NewReport report) async {}
+
+  @override
+  Future<Uint8List> image(String path) async => Uint8List(0);
 }
 
 Future<void> _pumpHome(WidgetTester tester, ReportRepository reports) async {

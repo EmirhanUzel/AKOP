@@ -14,21 +14,23 @@ String relativeTime(DateTime time, DateTime now) {
 }
 
 class ReportCard extends StatelessWidget {
-  const ReportCard({super.key, required this.report});
+  const ReportCard({super.key, required this.report, this.onTap});
 
   final Report report;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final category = categoryOf(report.categoryCode);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: AppColors.border)),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
@@ -56,7 +58,7 @@ class ReportCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _StatusBadge(report.status),
+                    StatusBadge(report.status),
                     const Spacer(),
                     Text(relativeTime(report.createdAt, DateTime.now()), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                   ],
@@ -66,12 +68,14 @@ class ReportCard extends StatelessWidget {
           ),
         ],
       ),
+        ),
+      ),
     );
   }
 }
 
-class _StatusBadge extends StatelessWidget {
-  const _StatusBadge(this.status);
+class StatusBadge extends StatelessWidget {
+  const StatusBadge(this.status, {super.key});
 
   final ReportStatus status;
 

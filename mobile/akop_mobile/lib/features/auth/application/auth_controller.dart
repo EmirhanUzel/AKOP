@@ -8,17 +8,20 @@ import '../data/api_auth_repository.dart';
 import '../data/auth_repository.dart';
 import '../data/token_store.dart';
 
+/// Tüm servisler bu Dio'yu paylaşır: [ApiAuthRepository] buna token ekleyen ve 401'de yenileyen
+/// interceptor'ı takar. Başka servislere tam URL ile istek atılır.
+final apiDioProvider = Provider<Dio>(
+  (ref) => Dio(BaseOptions(
+    baseUrl: apiBaseUrl,
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+    // 400/401 yanıtlarını repository kendisi ele alır
+    validateStatus: (s) => s != null && s < 500,
+  )),
+);
+
 final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => ApiAuthRepository(
-    Dio(BaseOptions(
-      baseUrl: apiBaseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      // 400/401 yanıtlarını repository kendisi ele alır
-      validateStatus: (s) => s != null && s < 500,
-    )),
-    SecureTokenStore(),
-  ),
+  (ref) => ApiAuthRepository(ref.watch(apiDioProvider), SecureTokenStore()),
 );
 
 class AuthState {

@@ -5,7 +5,7 @@ import '../domain/new_report.dart';
 
 const maxPhotos = 5;
 
-/// Ankara merkez; konum izni yoksa harita buradan açılır.
+/// Ankara merkez; konum izni yoksa harita buradan açılır (ihbar konumu olarak kaydedilmez).
 const defaultLocation = LatLng(39.9032, 32.8597);
 
 class ReportDraft {
@@ -15,6 +15,7 @@ class ReportDraft {
     this.description = '',
     this.title = '',
     this.categoryCode,
+    this.locationDescription = '',
   });
 
   final List<String> photos;
@@ -22,6 +23,7 @@ class ReportDraft {
   final String description;
   final String title;
   final String? categoryCode;
+  final String locationDescription;
 
   ReportDraft copyWith({
     List<String>? photos,
@@ -29,6 +31,7 @@ class ReportDraft {
     String? description,
     String? title,
     String? categoryCode,
+    String? locationDescription,
     bool clearCategory = false,
   }) =>
       ReportDraft(
@@ -37,10 +40,12 @@ class ReportDraft {
         description: description ?? this.description,
         title: title ?? this.title,
         categoryCode: clearCategory ? null : (categoryCode ?? this.categoryCode),
+        locationDescription: locationDescription ?? this.locationDescription,
       );
 
+  /// Konum seçilmeden çağrılmaz: Konum adımı seçilmeden "Devam"ı kapalı tutar.
   NewReport toNewReport() {
-    final loc = location ?? defaultLocation;
+    final loc = location!;
     return NewReport(
       photos: photos,
       lat: loc.latitude,
@@ -48,6 +53,7 @@ class ReportDraft {
       description: description.trim(),
       title: title.trim().isEmpty ? null : title.trim(),
       categoryCode: categoryCode,
+      locationDescription: locationDescription.trim().isEmpty ? null : locationDescription.trim(),
     );
   }
 }
@@ -71,6 +77,8 @@ class DraftController extends Notifier<ReportDraft> {
   void setDescription(String v) => state = state.copyWith(description: v);
 
   void setTitle(String v) => state = state.copyWith(title: v);
+
+  void setLocationDescription(String v) => state = state.copyWith(locationDescription: v);
 
   void setCategory(String? code) =>
       state = code == null ? state.copyWith(clearCategory: true) : state.copyWith(categoryCode: code);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../application/report_providers.dart';
@@ -70,7 +71,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 96), // alttaki İhbar Et butonunun altında kalmasın
                     itemCount: shown.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (_, i) => ReportCard(report: shown[i]),
+                    itemBuilder: (_, i) => ReportCard(report: shown[i], onTap: () => context.push('/ihbar', extra: shown[i])),
                   ),
                 );
               },
