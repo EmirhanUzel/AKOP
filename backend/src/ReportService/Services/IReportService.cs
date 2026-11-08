@@ -8,4 +8,6 @@ public interface IReportService
 {
     Task<ReportResponseDto> CreateAsync(CreateReportDto dto, string citizenId);
     Task<List<ReportResponseDto>> GetMineAsync (string citizenId);
+    Task<ReportResponseDto?> GetMineByIdAsync(Guid reportId, string citizenId);
+    Task<ReportImageFile?> GetImageAsync(Guid reportId, Guid imageId, string citizenId);
 }

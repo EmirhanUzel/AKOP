@@ -1,20 +1,30 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 using ReportService.Constants;
 using ReportService.Data;
+using ReportService.ModelBinding;
 
 using ReportService.Repositories;
 using ReportService.Services;
+using ReportService.Storage;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Controller servisleri
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    // Form alanlarındaki sayılar (enlem/boylam) kültürden bağımsız okunur
+    var formFactoryIndex = options.ValueProviderFactories
+        .IndexOf(options.ValueProviderFactories.OfType<FormValueProviderFactory>().Single());
+
+    options.ValueProviderFactories[formFactoryIndex] = new InvariantCultureFormValueProviderFactory();
+});
 
 // OpenAPI
 builder.Services.AddOpenApi();
@@ -28,6 +38,9 @@ builder.Services.AddDbContext<ReportDbContext>(options =>
 
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IReportService, ReportService.Services.ReportService>();
+
+// Fotoğraf dosyaları (şimdilik disk; ileride S3 uyumlu depolama)
+builder.Services.AddSingleton<IFileStorage, DiskFileStorage>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT anahtarı bulunamadı.");

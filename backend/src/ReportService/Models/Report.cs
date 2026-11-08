@@ -13,6 +13,7 @@ public class Report
     public string? LocationDescription { get; set; }
     public ReportStatus Status {get;set;} = ReportStatus.Pending;
     public DateTime CreatedAt {get;set;} = DateTime.UtcNow;
+    public List<ReportImage> Images { get; set; } = new();
 
 
 
