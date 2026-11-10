@@ -14,6 +14,9 @@ public class Organization
     public OrganizationType OrganizationType { get; set; } = null!;
 
     public string City { get; set; } = "";
+
+    // Boşsa kurum şehrin tamamından sorumlu (ör. büyükşehir belediyesi)
+    public string? District { get; set; }
     public string? ProfileInfo { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

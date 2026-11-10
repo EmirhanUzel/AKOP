@@ -48,6 +48,9 @@ public class InstitutionDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
 
+            entity.Property(organization => organization.District)
+                .HasMaxLength(100);
+
             entity.Property(organization => organization.ProfileInfo)
                 .HasMaxLength(1000);
 

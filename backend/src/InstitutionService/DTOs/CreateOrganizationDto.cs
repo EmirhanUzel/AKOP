@@ -15,6 +15,9 @@ public class CreateOrganizationDto
     [MaxLength(100)]
     public string City { get; set; } = "";
 
+    [MaxLength(100)]
+    public string? District { get; set; }
+
     [MaxLength(1000)]
     public string? ProfileInfo { get; set; }
 }
