@@ -36,6 +36,9 @@ public class ReportDbContext : DbContext
             entity.Property(report => report.CategoryCode)
                 .HasMaxLength(50);
 
+            entity.Property(report => report.SubcategoryCode)
+                .HasMaxLength(50);
+
             entity.Property(report => report.LocationDescription)
                 .HasMaxLength(300);
 
