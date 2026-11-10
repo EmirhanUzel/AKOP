@@ -41,14 +41,12 @@ public static class ReportCategories
             new("ACCESS_RAMP", "Engelli rampası sorunu"),
             new("OBSTRUCTION", "Kaldırımı kapatan engel")
         }),
-        new("PARK", "Park ve bahçe", new List<ReportSubcategory>
+        // Ağaçlar ayrı kategori değil: belediyelerde park ve sokak ağaçlarına aynı birim bakıyor
+        new("PARK", "Park ve yeşil alan", new List<ReportSubcategory>
         {
             new("BENCH", "Bank veya oturma alanı"),
             new("PLAYGROUND", "Oyun alanı"),
-            new("LANDSCAPING", "Çim ve peyzaj bakımı")
-        }),
-        new("TREE", "Ağaç", new List<ReportSubcategory>
-        {
+            new("LANDSCAPING", "Çim ve peyzaj bakımı"),
             new("FALLEN_TREE", "Devrilmiş ağaç veya kırık dal"),
             new("PRUNING", "Budama gerekiyor"),
             new("DEAD_TREE", "Kurumuş ağaç")
