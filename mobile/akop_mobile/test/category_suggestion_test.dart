@@ -4,6 +4,7 @@ import 'package:akop_mobile/features/reports/application/report_providers.dart';
 import 'package:akop_mobile/features/reports/data/report_repository.dart';
 import 'package:akop_mobile/features/reports/domain/report_category.dart';
 import 'package:akop_mobile/features/reports/presentation/new_report/detail_step.dart';
+import 'package:akop_mobile/features/reports/presentation/new_report/photo_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,6 +27,15 @@ class _Suggesting extends FakeReportRepository {
       matchesImage: categoryCode == null ? null : categoryCode == 'PARK',
     );
   }
+}
+
+/// 'a.jpg' için emin öneri (Yol hasarı), diğer fotoğraflar için emin olmayan öneri.
+class _ByPhoto extends FakeReportRepository {
+  @override
+  Future<CategorySuggestion> suggestCategory(String photo, {String? categoryCode}) async => CategorySuggestion(
+        suggestions: const [CategoryGuess('ROAD_DAMAGE', 'Yol hasarı', 0.9), CategoryGuess('PARK', 'Park ve yeşil alan', 0.05)],
+        isConfident: photo == 'a.jpg',
+      );
 }
 
 Future<ProviderContainer> _open(WidgetTester tester, ReportRepository repo) async {
@@ -92,5 +102,32 @@ void main() {
     expect(find.byType(ChoiceChip), findsNothing);
     expect(find.text('Boş bırakırsanız sistem sizin için önerir.'), findsOneWidget);
     expect(find.text('Kategori seçin'), findsOneWidget);
+  });
+
+  testWidgets('otomatik kategori ilk fotoğraf değişince yenilenir, kullanıcının seçimi korunur', (tester) async {
+    await tester.pumpWidget(ProviderScope(
+      overrides: [reportRepositoryProvider.overrideWithValue(_ByPhoto())],
+      child: const MaterialApp(home: PhotoStep()),
+    ));
+    final c = ProviderScope.containerOf(tester.element(find.byType(PhotoStep)));
+    final d = c.read(draftProvider.notifier);
+    String? category() => c.read(draftProvider).categoryCode;
+
+    d.addPhotos(['a.jpg', 'b.jpg']);
+    await tester.pump();
+    await tester.pump();
+    expect(category(), 'ROAD_DAMAGE'); // emin: otomatik seçildi
+
+    d.removePhoto(0); // ilk fotoğraf artık b: emin öneri yok
+    await tester.pump();
+    await tester.pump();
+    expect(category(), isNull);
+
+    d.setCategory('PARK'); // kullanıcı seçti
+    d.addPhotos(['a.jpg']);
+    d.removePhoto(0); // ilk fotoğraf a: emin öneri var ama kullanıcının seçimi kalır
+    await tester.pump();
+    await tester.pump();
+    expect(category(), 'PARK');
   });
 }

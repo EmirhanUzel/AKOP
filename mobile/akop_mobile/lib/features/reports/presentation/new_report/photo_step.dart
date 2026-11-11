@@ -23,9 +23,14 @@ class PhotoStep extends ConsumerWidget {
     final suggesting = query != null && ref.watch(categorySuggestionProvider(query)).isLoading;
     if (query != null) {
       ref.listen(categorySuggestionProvider(query), (_, next) {
+        if (next.isLoading) return;
+        final d = ref.read(draftProvider);
+        if (d.categoryCode != null && !d.categoryAuto) return; // kullanıcının seçimi korunur
         final s = next.value;
-        if (s != null && s.isConfident && s.suggestions.isNotEmpty && ref.read(draftProvider).categoryCode == null) {
-          draft.setCategory(s.suggestions.first.code);
+        if (s != null && s.isConfident && s.suggestions.isNotEmpty) {
+          draft.setCategory(s.suggestions.first.code, auto: true);
+        } else if (d.categoryAuto) {
+          draft.setCategory(null); // ilk fotoğraf değişti, yeni fotoğraf için emin öneri yok
         }
       });
     }

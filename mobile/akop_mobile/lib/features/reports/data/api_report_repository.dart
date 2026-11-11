@@ -111,6 +111,7 @@ class ApiReportRepository implements ReportRepository {
       createdAt: DateTime.parse(j['createdAt'] as String).toLocal(),
       locationText: place ?? '${(j['latitude'] as num).toStringAsFixed(5)}, ${(j['longitude'] as num).toStringAsFixed(5)}',
       categoryCode: code,
+      subcategoryCode: j['subcategoryCode'] as String?,
       description: j['description'] as String? ?? '',
       imageUrls: [...?(j['imageUrls'] as List?)?.whereType<String>()],
     );
