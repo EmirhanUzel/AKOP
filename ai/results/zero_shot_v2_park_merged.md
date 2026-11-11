@@ -1,0 +1,31 @@
+# zero_shot_v2_park_merged
+
+- Model: ViT-B-32-quickgelu (openai) · Cihaz: cuda
+- Fotoğraf: 230 · Doğruluk: **%76.5** · İlk 3'te doğru: %93.5
+- Fotoğraf başına süre: 15.1 ms
+
+## Kategori bazında
+
+| Kategori | Fotoğraf | Doğru | Doğruluk |
+|---|---|---|---|
+| ROAD_DAMAGE | 44 | 38 | %86 |
+| WATER_LEAK | 23 | 14 | %61 |
+| LIGHTING | 21 | 16 | %76 |
+| WASTE | 19 | 18 | %95 |
+| SIDEWALK | 23 | 18 | %78 |
+| PARK | 34 | 19 | %56 |
+| TRAFFIC_SIGN | 30 | 27 | %90 |
+| OTHER | 36 | 26 | %72 |
+
+## Karışıklık matrisi (satır: gerçek, sütun: tahmin)
+
+| | ROAD_DAMAGE | WATER_LEAK | LIGHTING | WASTE | SIDEWALK | PARK | TRAFFIC_SIGN | OTHER |
+|---|---|---|---|---|---|---|---|---|
+| **ROAD_DAMAGE** | 38 | 3 | 1 | 0 | 1 | 0 | 0 | 1 |
+| **WATER_LEAK** | 5 | 14 | 0 | 3 | 1 | 0 | 0 | 0 |
+| **LIGHTING** | 0 | 1 | 16 | 0 | 0 | 0 | 3 | 1 |
+| **WASTE** | 0 | 0 | 0 | 18 | 0 | 0 | 0 | 1 |
+| **SIDEWALK** | 1 | 1 | 0 | 2 | 18 | 0 | 0 | 1 |
+| **PARK** | 3 | 2 | 0 | 2 | 5 | 19 | 1 | 2 |
+| **TRAFFIC_SIGN** | 0 | 0 | 0 | 1 | 1 | 0 | 27 | 1 |
+| **OTHER** | 2 | 0 | 0 | 3 | 2 | 1 | 2 | 26 |

@@ -1,0 +1,46 @@
+{
+  "ROAD_DAMAGE": [
+    "a photo of a pothole in the road",
+    "a photo of cracked or damaged asphalt",
+    "a photo of a broken road surface"
+  ],
+  "WATER_LEAK": [
+    "a photo of water leaking onto the street",
+    "a photo of a puddle from a broken water pipe",
+    "a photo of a leaking fire hydrant",
+    "a photo of a flooded street"
+  ],
+  "LIGHTING": [
+    "a photo of a street light",
+    "a photo of a broken street lamp",
+    "a photo of a dark street at night with a street light"
+  ],
+  "WASTE": [
+    "a photo of garbage on the sidewalk",
+    "a photo of trash and litter on the street",
+    "a photo of illegally dumped furniture and boxes"
+  ],
+  "SIDEWALK": [
+    "a photo of a cracked sidewalk",
+    "a photo of broken sidewalk tiles",
+    "a photo of an uneven sidewalk pavement"
+  ],
+  "PARK": [
+    "a photo of a damaged park bench",
+    "a photo of a playground",
+    "a photo of an untended flower bed or landscaping",
+    "a photo of a fallen tree",
+    "a photo of a broken tree branch",
+    "a photo of a damaged tree"
+  ],
+  "TRAFFIC_SIGN": [
+    "a photo of a traffic sign",
+    "a photo of a damaged stop sign",
+    "a photo of a traffic light"
+  ],
+  "OTHER": [
+    "a photo of graffiti on a wall",
+    "a photo of vandalism",
+    "a photo of an illegally parked car"
+  ]
+}
