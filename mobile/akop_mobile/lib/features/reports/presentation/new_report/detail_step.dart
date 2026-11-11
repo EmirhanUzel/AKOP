@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/form_fields.dart';
 import '../../application/draft_controller.dart';
+import '../../application/report_providers.dart';
 import '../../domain/report_category.dart';
+import 'photo_widgets.dart';
 import 'step_scaffold.dart';
 
 /// C-06 İhbar 3/4: Detay
@@ -34,6 +36,16 @@ class _DetailStepState extends ConsumerState<DetailStep> {
   Widget build(BuildContext context) {
     final draft = ref.read(draftProvider.notifier);
     final category = ref.watch(draftProvider.select((d) => d.categoryCode));
+    final subcategory = ref.watch(draftProvider.select((d) => d.subcategoryCode));
+    final photo = ref.watch(draftProvider.select((d) => d.photos.firstOrNull));
+    final categories = ref.watch(reportCategoriesProvider);
+    final selected = categoryOf(categories.value, category);
+    final suggestion = photo == null ? null : ref.watch(categorySuggestionProvider((photo: photo, category: null)));
+    final guesses = suggestion?.value;
+    // İlk öneri dışında bir kategori seçildiyse fotoğrafla uyumu sorulur (2. ve 3. öneri ~%0 olabilir)
+    final check = guesses == null || category == null || guesses.suggestions.firstOrNull?.code == category
+        ? null
+        : ref.watch(categorySuggestionProvider((photo: photo!, category: category)));
     return StepScaffold(
       step: 3,
       label: 'Detay',
@@ -94,12 +106,13 @@ class _DetailStepState extends ConsumerState<DetailStep> {
             const SizedBox(height: 8),
             const FieldLabel('Kategori', optional: true),
             DropdownButtonFormField<String>(
-              initialValue: category,
+              key: ValueKey(category), // otomatik seçim ya da öneri çipi değeri dışarıdan değiştirir
+              initialValue: selected?.code,
               isExpanded: true,
-              hint: const Text('Kategori seçin'),
+              hint: Text(categories.hasError ? 'Kategoriler yüklenemedi' : 'Kategori seçin'),
               decoration: const InputDecoration(),
               items: [
-                for (final c in reportCategories)
+                for (final c in categories.value ?? const <ReportCategory>[])
                   DropdownMenuItem(
                     value: c.code,
                     child: Row(children: [Icon(c.icon, size: 20, color: AppColors.navy), const SizedBox(width: 12), Text(c.name)]),
@@ -107,14 +120,74 @@ class _DetailStepState extends ConsumerState<DetailStep> {
               ],
               onChanged: draft.setCategory,
             ),
+            if (categories.hasError)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton(onPressed: () => ref.invalidate(reportCategoriesProvider), child: const Text('Tekrar dene')),
+              ),
             const SizedBox(height: 8),
-            const Row(
-              children: [
-                Icon(Icons.auto_awesome, size: 16, color: AppColors.orange),
-                SizedBox(width: 6),
-                Text('Boş bırakırsanız sistem sizin için önerir.', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+            if (suggestion?.isLoading ?? false)
+              const SuggestingIndicator()
+            else if (guesses != null && guesses.suggestions.isNotEmpty) ...[
+              // Emin öneri yalnızca seçili kategoriyse anılır; kullanıcı değiştirdiyse "önerildi" yazmaz
+              if (!guesses.isConfident || category == guesses.suggestions.first.code)
+                Row(
+                  children: [
+                    const Icon(Icons.auto_awesome, size: 16, color: AppColors.orange),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        guesses.isConfident ? 'Fotoğrafa göre önerildi, değiştirebilirsiniz.' : 'Fotoğrafa göre öneriler:',
+                        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      ),
+                    ),
+                  ],
+                ),
+              if (!guesses.isConfident) ...[
+                const SizedBox(height: 4),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final g in guesses.suggestions)
+                      ChoiceChip(label: Text(g.name), selected: g.code == category, onSelected: (_) => draft.setCategory(g.code)),
+                  ],
+                ),
               ],
-            ),
+            ] else
+              const Row(
+                children: [
+                  Icon(Icons.auto_awesome, size: 16, color: AppColors.orange),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text('Boş bırakırsanız sistem sizin için önerir.', style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                  ),
+                ],
+              ),
+            if (check?.value?.matchesImage == false) ...[
+              const SizedBox(height: 8),
+              const Row(
+                children: [
+                  Icon(Icons.info_outline, size: 16, color: AppColors.orange),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text('Fotoğraf bu kategoriye benzemiyor, emin misiniz?', style: TextStyle(fontSize: 12, color: AppColors.orange)),
+                  ),
+                ],
+              ),
+            ],
+            if (selected != null && selected.subcategories.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              const FieldLabel('Alt kategori', optional: true),
+              DropdownButtonFormField<String>(
+                key: ValueKey('$category/$subcategory'),
+                initialValue: subcategory,
+                isExpanded: true,
+                hint: const Text('Alt kategori seçin'),
+                decoration: const InputDecoration(),
+                items: [for (final s in selected.subcategories) DropdownMenuItem(value: s.code, child: Text(s.name))],
+                onChanged: draft.setSubcategory,
+              ),
+            ],
           ],
         ),
       ),

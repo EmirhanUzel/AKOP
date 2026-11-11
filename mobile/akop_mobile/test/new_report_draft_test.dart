@@ -14,6 +14,19 @@ void main() {
     expect(c.read(draftProvider).photos, ['1', '2', '3', '4', '5']);
   });
 
+  test('kategori değişince alt kategori temizlenir', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final d = c.read(draftProvider.notifier)
+      ..setCategory('PARK')
+      ..setSubcategory('BENCH');
+    expect(c.read(draftProvider).subcategoryCode, 'BENCH');
+    d.setCategory('PARK');
+    expect(c.read(draftProvider).subcategoryCode, 'BENCH');
+    d.setCategory('SIDEWALK');
+    expect(c.read(draftProvider).subcategoryCode, isNull);
+  });
+
   test('toNewReport boş başlığı null yapar, seçilen konumu aktarır', () {
     final n = const ReportDraft(description: '  Çukur var ', title: ' ', location: LatLng(39.92, 32.85)).toNewReport();
     expect(n.description, 'Çukur var');

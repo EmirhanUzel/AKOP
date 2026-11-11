@@ -15,6 +15,7 @@ class ReportDraft {
     this.description = '',
     this.title = '',
     this.categoryCode,
+    this.subcategoryCode,
     this.locationDescription = '',
   });
 
@@ -23,6 +24,7 @@ class ReportDraft {
   final String description;
   final String title;
   final String? categoryCode;
+  final String? subcategoryCode;
   final String locationDescription;
 
   ReportDraft copyWith({
@@ -31,8 +33,10 @@ class ReportDraft {
     String? description,
     String? title,
     String? categoryCode,
+    String? subcategoryCode,
     String? locationDescription,
     bool clearCategory = false,
+    bool clearSubcategory = false,
   }) =>
       ReportDraft(
         photos: photos ?? this.photos,
@@ -40,6 +44,7 @@ class ReportDraft {
         description: description ?? this.description,
         title: title ?? this.title,
         categoryCode: clearCategory ? null : (categoryCode ?? this.categoryCode),
+        subcategoryCode: clearCategory || clearSubcategory ? null : (subcategoryCode ?? this.subcategoryCode),
         locationDescription: locationDescription ?? this.locationDescription,
       );
 
@@ -53,6 +58,7 @@ class ReportDraft {
       description: description.trim(),
       title: title.trim().isEmpty ? null : title.trim(),
       categoryCode: categoryCode,
+      subcategoryCode: subcategoryCode,
       locationDescription: locationDescription.trim().isEmpty ? null : locationDescription.trim(),
     );
   }
@@ -80,8 +86,14 @@ class DraftController extends Notifier<ReportDraft> {
 
   void setLocationDescription(String v) => state = state.copyWith(locationDescription: v);
 
-  void setCategory(String? code) =>
-      state = code == null ? state.copyWith(clearCategory: true) : state.copyWith(categoryCode: code);
+  /// Alt kategori başka kategoriye ait olamaz (sunucu 400 verir): kategori değişince temizlenir.
+  void setCategory(String? code) {
+    if (code == state.categoryCode) return;
+    state = code == null ? state.copyWith(clearCategory: true) : state.copyWith(categoryCode: code, clearSubcategory: true);
+  }
+
+  void setSubcategory(String? code) =>
+      state = code == null ? state.copyWith(clearSubcategory: true) : state.copyWith(subcategoryCode: code);
 
   void reset() => state = const ReportDraft();
 }
