@@ -9,6 +9,7 @@ import '../../application/report_providers.dart';
 import '../../domain/report_category.dart';
 import 'photo_widgets.dart';
 import 'step_scaffold.dart';
+import 'voice_input.dart';
 
 /// C-06 İhbar 3/4: Detay
 class DetailStep extends ConsumerStatefulWidget {
@@ -58,7 +59,13 @@ class _DetailStepState extends ConsumerState<DetailStep> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
           children: [
-            const FieldLabel('Açıklama', required: true),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(child: FieldLabel('Açıklama', required: true)),
+                VoiceInputButton(controller: _description, onChanged: draft.setDescription),
+              ],
+            ),
             TextFormField(
               controller: _description,
               maxLines: 6,
