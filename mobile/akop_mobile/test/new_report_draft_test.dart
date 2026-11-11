@@ -27,6 +27,25 @@ void main() {
     expect(c.read(draftProvider).subcategoryCode, isNull);
   });
 
+  test('önerilen kategori fotoğraflar silinince kalkar, kullanıcının seçtiği kalır', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final d = c.read(draftProvider.notifier)
+      ..addPhotos(['a'])
+      ..setCategory('ROAD_DAMAGE', auto: true);
+    expect(c.read(draftProvider).categoryAuto, isTrue);
+    d.removePhoto(0);
+    expect(c.read(draftProvider).categoryCode, isNull);
+
+    d
+      ..addPhotos(['b'])
+      ..setCategory('PARK', auto: true)
+      ..setCategory('PARK'); // kullanıcı aynı kategoriyi onayladı
+    expect(c.read(draftProvider).categoryAuto, isFalse);
+    d.removePhoto(0);
+    expect(c.read(draftProvider).categoryCode, 'PARK');
+  });
+
   test('toNewReport boş başlığı null yapar, seçilen konumu aktarır', () {
     final n = const ReportDraft(description: '  Çukur var ', title: ' ', location: LatLng(39.92, 32.85)).toNewReport();
     expect(n.description, 'Çukur var');

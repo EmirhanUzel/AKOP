@@ -17,6 +17,7 @@ class ReportDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final category = categoryOf(ref.watch(reportCategoriesProvider).value, report.categoryCode);
+    final sub = category?.subcategories.where((s) => s.code == report.subcategoryCode).firstOrNull;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -40,7 +41,7 @@ class ReportDetailScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             Chip(
               avatar: Icon(category.icon, size: 16, color: AppColors.navy),
-              label: Text(category.name),
+              label: Text(sub == null ? category.name : '${category.name} · ${sub.name}'),
               backgroundColor: AppColors.neutralBg,
               side: BorderSide.none,
               shape: const StadiumBorder(),

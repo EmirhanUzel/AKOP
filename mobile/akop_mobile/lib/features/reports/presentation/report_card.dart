@@ -45,7 +45,8 @@ class ReportCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(report.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                if (category != null) ...[
+                // Başlıksız ihbarda başlık zaten kategori adıdır; ikinci kez yazılmaz
+                if (category != null && category.name != report.title) ...[
                   const SizedBox(height: 2),
                   Text(category.name, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                 ],
