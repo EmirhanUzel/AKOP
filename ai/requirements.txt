@@ -1,0 +1,10 @@
+# Python 3.12 ile denendi. PyTorch, CUDA 13 destekli sürümüyle gelir (NVIDIA sürücüsü 580+).
+# CLIP modeli: ViT-B-32-quickgelu, pretrained='openai' (OpenAI ağırlıkları QuickGELU ile eğitildi).
+torch==2.15.0
+torchvision==0.29.2
+open_clip_torch==4.2.2
+pillow==13.0.0
+numpy==2.5.4
+scikit-learn==1.9.1
+onnx==1.23.2
+onnxruntime==1.31.1

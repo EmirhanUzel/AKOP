@@ -33,6 +33,13 @@ coverage/
 # Yüklenen dosyalar (ReportService fotoğrafları)
 **/App_Data/
 
+# AI: veri setleri, modeller ve Python ortamı
+ai/data/
+ai/models/
+ai/.venv/
+__pycache__/
+*.ipynb_checkpoints/
+
 # Logs
 *.log
 

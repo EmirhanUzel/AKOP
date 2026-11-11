@@ -1,0 +1,2480 @@
+{
+ "name": "linear_probe_v1_plus_zero_shot",
+ "date": "2026-11-11T02:09:23",
+ "model": "ViT-B-32-quickgelu (openai)",
+ "train_images": 1200,
+ "train_per_class": {
+  "ROAD_DAMAGE": 150,
+  "WATER_LEAK": 150,
+  "LIGHTING": 150,
+  "WASTE": 150,
+  "SIDEWALK": 150,
+  "PARK": 150,
+  "TRAFFIC_SIGN": 150,
+  "OTHER": 150
+ },
+ "C": 100.0,
+ "cv_accuracy": 0.7975,
+ "blend": "0.5 linear probe + 0.5 zero-shot",
+ "images": 212,
+ "accuracy": 0.8774,
+ "top3_accuracy": 0.9858,
+ "per_class": {
+  "ROAD_DAMAGE": {
+   "count": 43,
+   "correct": 39,
+   "accuracy": 0.907
+  },
+  "WATER_LEAK": {
+   "count": 21,
+   "correct": 15,
+   "accuracy": 0.7143
+  },
+  "LIGHTING": {
+   "count": 20,
+   "correct": 18,
+   "accuracy": 0.9
+  },
+  "WASTE": {
+   "count": 19,
+   "correct": 19,
+   "accuracy": 1.0
+  },
+  "SIDEWALK": {
+   "count": 20,
+   "correct": 18,
+   "accuracy": 0.9
+  },
+  "PARK": {
+   "count": 34,
+   "correct": 25,
+   "accuracy": 0.7353
+  },
+  "TRAFFIC_SIGN": {
+   "count": 30,
+   "correct": 28,
+   "accuracy": 0.9333
+  },
+  "OTHER": {
+   "count": 25,
+   "correct": 24,
+   "accuracy": 0.96
+  }
+ },
+ "confusion": {
+  "ROAD_DAMAGE": {
+   "ROAD_DAMAGE": 39,
+   "WATER_LEAK": 2,
+   "LIGHTING": 1,
+   "WASTE": 0,
+   "SIDEWALK": 1,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 0,
+   "OTHER": 0
+  },
+  "WATER_LEAK": {
+   "ROAD_DAMAGE": 5,
+   "WATER_LEAK": 15,
+   "LIGHTING": 0,
+   "WASTE": 0,
+   "SIDEWALK": 1,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 0,
+   "OTHER": 0
+  },
+  "LIGHTING": {
+   "ROAD_DAMAGE": 0,
+   "WATER_LEAK": 1,
+   "LIGHTING": 18,
+   "WASTE": 0,
+   "SIDEWALK": 0,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 1,
+   "OTHER": 0
+  },
+  "WASTE": {
+   "ROAD_DAMAGE": 0,
+   "WATER_LEAK": 0,
+   "LIGHTING": 0,
+   "WASTE": 19,
+   "SIDEWALK": 0,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 0,
+   "OTHER": 0
+  },
+  "SIDEWALK": {
+   "ROAD_DAMAGE": 1,
+   "WATER_LEAK": 0,
+   "LIGHTING": 0,
+   "WASTE": 1,
+   "SIDEWALK": 18,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 0,
+   "OTHER": 0
+  },
+  "PARK": {
+   "ROAD_DAMAGE": 1,
+   "WATER_LEAK": 2,
+   "LIGHTING": 1,
+   "WASTE": 0,
+   "SIDEWALK": 4,
+   "PARK": 25,
+   "TRAFFIC_SIGN": 0,
+   "OTHER": 1
+  },
+  "TRAFFIC_SIGN": {
+   "ROAD_DAMAGE": 0,
+   "WATER_LEAK": 0,
+   "LIGHTING": 0,
+   "WASTE": 1,
+   "SIDEWALK": 0,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 28,
+   "OTHER": 1
+  },
+  "OTHER": {
+   "ROAD_DAMAGE": 0,
+   "WATER_LEAK": 0,
+   "LIGHTING": 0,
+   "WASTE": 1,
+   "SIDEWALK": 0,
+   "PARK": 0,
+   "TRAFFIC_SIGN": 0,
+   "OTHER": 24
+  }
+ },
+ "predictions": [
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_01.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9963,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_02.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9559,
+   "top3": [
+    "ROAD_DAMAGE",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_03.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9502,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_04.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.7806,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_08.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9943,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_10.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9324,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_damaged_14.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9542,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_00.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "LIGHTING",
+   "confidence": 0.3768,
+   "top3": [
+    "LIGHTING",
+    "ROAD_DAMAGE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_01.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9217,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_02.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.8662,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_03.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.7772,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_04.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9944,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_06.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.994,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_07.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9967,
+   "top3": [
+    "ROAD_DAMAGE",
+    "TRAFFIC_SIGN",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_08.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9456,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_09.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.8601,
+   "top3": [
+    "ROAD_DAMAGE",
+    "OTHER",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_10.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9673,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_11.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9953,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_12.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9472,
+   "top3": [
+    "ROAD_DAMAGE",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_13.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9739,
+   "top3": [
+    "ROAD_DAMAGE",
+    "PARK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/hf_pothole_14.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9708,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_02.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9482,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_04.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9588,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_05.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.675,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_07.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.5764,
+   "top3": [
+    "WATER_LEAK",
+    "ROAD_DAMAGE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_08.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9826,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_09.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.6947,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_11.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.8433,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_12.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.5995,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_13.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.8312,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_14.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9977,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_15.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9916,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_16.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9546,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_18.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9482,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_19.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.6063,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_21.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.837,
+   "top3": [
+    "WATER_LEAK",
+    "ROAD_DAMAGE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_22.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.3626,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WASTE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_23.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9907,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_24.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "SIDEWALK",
+   "confidence": 0.8524,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_25.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9779,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_27.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9747,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_28.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9341,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "ROAD_DAMAGE/sf_pavement_29.jpg",
+   "actual": "ROAD_DAMAGE",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.9647,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_00.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.9588,
+   "top3": [
+    "WATER_LEAK",
+    "ROAD_DAMAGE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_01.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.788,
+   "top3": [
+    "WATER_LEAK",
+    "PARK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_03.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.9772,
+   "top3": [
+    "WATER_LEAK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_05.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.7561,
+   "top3": [
+    "WATER_LEAK",
+    "ROAD_DAMAGE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_07.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.7179,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_08.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.6564,
+   "top3": [
+    "WATER_LEAK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_09.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.9152,
+   "top3": [
+    "WATER_LEAK",
+    "PARK",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_10.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.5328,
+   "top3": [
+    "WATER_LEAK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_11.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.9477,
+   "top3": [
+    "WATER_LEAK",
+    "WASTE",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_12.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.5066,
+   "top3": [
+    "WATER_LEAK",
+    "WASTE",
+    "PARK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_13.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.4556,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_15.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.9009,
+   "top3": [
+    "WATER_LEAK",
+    "SIDEWALK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_17.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.7184,
+   "top3": [
+    "WATER_LEAK",
+    "PARK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_18.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.5921,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_22.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.5758,
+   "top3": [
+    "WATER_LEAK",
+    "ROAD_DAMAGE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_23.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.6465,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_24.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.5833,
+   "top3": [
+    "WATER_LEAK",
+    "WASTE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_26.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.6055,
+   "top3": [
+    "ROAD_DAMAGE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_27.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.8966,
+   "top3": [
+    "WATER_LEAK",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_28.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.7184,
+   "top3": [
+    "WATER_LEAK",
+    "PARK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WATER_LEAK/sf_waterleak_29.jpg",
+   "actual": "WATER_LEAK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.7319,
+   "top3": [
+    "ROAD_DAMAGE",
+    "WATER_LEAK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_02.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.8653,
+   "top3": [
+    "LIGHTING",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_03.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9885,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_04.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9431,
+   "top3": [
+    "LIGHTING",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_05.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9857,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_06.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.96,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_07.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.7573,
+   "top3": [
+    "LIGHTING",
+    "WASTE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_08.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.8954,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_09.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9976,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_11.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.86,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_13.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.4498,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_14.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.8959,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_15.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9932,
+   "top3": [
+    "LIGHTING",
+    "WATER_LEAK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_19.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.8373,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "PARK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_20.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9777,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_21.jpg",
+   "actual": "LIGHTING",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.7218,
+   "top3": [
+    "WATER_LEAK",
+    "SIDEWALK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_23.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9846,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_25.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9128,
+   "top3": [
+    "LIGHTING",
+    "OTHER",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_26.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.6196,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_27.jpg",
+   "actual": "LIGHTING",
+   "predicted": "LIGHTING",
+   "confidence": 0.9619,
+   "top3": [
+    "LIGHTING",
+    "OTHER",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "LIGHTING/sf_light_29.jpg",
+   "actual": "LIGHTING",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.4494,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "LIGHTING",
+    "PARK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_02.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.8957,
+   "top3": [
+    "WASTE",
+    "PARK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_03.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9823,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "PARK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_04.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9867,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_06.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9668,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_07.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.6387,
+   "top3": [
+    "WASTE",
+    "WATER_LEAK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_08.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9867,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "PARK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_09.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9508,
+   "top3": [
+    "WASTE",
+    "PARK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_10.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9379,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_14.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9797,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_17.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9244,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "PARK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_18.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9845,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_19.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9049,
+   "top3": [
+    "WASTE",
+    "WATER_LEAK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_20.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.6665,
+   "top3": [
+    "WASTE",
+    "PARK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_22.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9841,
+   "top3": [
+    "WASTE",
+    "SIDEWALK",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_23.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.5735,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_24.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9918,
+   "top3": [
+    "WASTE",
+    "ROAD_DAMAGE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_25.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.995,
+   "top3": [
+    "WASTE",
+    "PARK",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_27.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.9896,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "WASTE/sf_garbage_28.jpg",
+   "actual": "WASTE",
+   "predicted": "WASTE",
+   "confidence": 0.757,
+   "top3": [
+    "WASTE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_00.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.7334,
+   "top3": [
+    "SIDEWALK",
+    "PARK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_01.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.3476,
+   "top3": [
+    "ROAD_DAMAGE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_04.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.9284,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_06.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.8105,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_07.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.9792,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_09.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.5526,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_10.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.9763,
+   "top3": [
+    "SIDEWALK",
+    "PARK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_11.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.7903,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "PARK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_12.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "WASTE",
+   "confidence": 0.5041,
+   "top3": [
+    "WASTE",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_13.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.8612,
+   "top3": [
+    "SIDEWALK",
+    "WASTE",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_15.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.9346,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_16.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.7961,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_17.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.8098,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_19.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.7435,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_20.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.7299,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_21.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.5209,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "PARK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_22.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.6324,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_26.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.9679,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_28.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.5484,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "SIDEWALK/sf_sidewalk_29.jpg",
+   "actual": "SIDEWALK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.5505,
+   "top3": [
+    "SIDEWALK",
+    "WATER_LEAK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_08.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.4809,
+   "top3": [
+    "PARK",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_09.jpg",
+   "actual": "PARK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.5425,
+   "top3": [
+    "SIDEWALK",
+    "ROAD_DAMAGE",
+    "PARK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_11.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.4329,
+   "top3": [
+    "PARK",
+    "SIDEWALK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_13.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.3054,
+   "top3": [
+    "PARK",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_14.jpg",
+   "actual": "PARK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.9127,
+   "top3": [
+    "WATER_LEAK",
+    "ROAD_DAMAGE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_17.jpg",
+   "actual": "PARK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.4312,
+   "top3": [
+    "SIDEWALK",
+    "PARK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_21.jpg",
+   "actual": "PARK",
+   "predicted": "ROAD_DAMAGE",
+   "confidence": 0.5478,
+   "top3": [
+    "ROAD_DAMAGE",
+    "PARK",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_23.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.6452,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "PARK/sf_landscaping_27.jpg",
+   "actual": "PARK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.4521,
+   "top3": [
+    "SIDEWALK",
+    "WASTE",
+    "PARK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_00.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.9446,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_01.jpg",
+   "actual": "PARK",
+   "predicted": "SIDEWALK",
+   "confidence": 0.6062,
+   "top3": [
+    "SIDEWALK",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_03.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8883,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_04.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.901,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_05.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8996,
+   "top3": [
+    "PARK",
+    "SIDEWALK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_06.jpg",
+   "actual": "PARK",
+   "predicted": "LIGHTING",
+   "confidence": 0.5577,
+   "top3": [
+    "LIGHTING",
+    "TRAFFIC_SIGN",
+    "PARK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_07.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8132,
+   "top3": [
+    "PARK",
+    "LIGHTING",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_08.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.7198,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_09.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.7023,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_10.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.7904,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_11.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.5341,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_12.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.9116,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_13.jpg",
+   "actual": "PARK",
+   "predicted": "WATER_LEAK",
+   "confidence": 0.3592,
+   "top3": [
+    "WATER_LEAK",
+    "PARK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_14.jpg",
+   "actual": "PARK",
+   "predicted": "OTHER",
+   "confidence": 0.5914,
+   "top3": [
+    "OTHER",
+    "PARK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_15.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8524,
+   "top3": [
+    "PARK",
+    "TRAFFIC_SIGN",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_16.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.9629,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_17.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.5362,
+   "top3": [
+    "PARK",
+    "LIGHTING",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_19.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.5469,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_20.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.4614,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_22.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8332,
+   "top3": [
+    "PARK",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_23.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.491,
+   "top3": [
+    "PARK",
+    "ROAD_DAMAGE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_24.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8266,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_25.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.8211,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_27.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.99,
+   "top3": [
+    "PARK",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "PARK/sf_tree_28.jpg",
+   "actual": "PARK",
+   "predicted": "PARK",
+   "confidence": 0.5144,
+   "top3": [
+    "PARK",
+    "WASTE",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_00.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9781,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "ROAD_DAMAGE",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_01.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9295,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_02.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9855,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_03.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9979,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_04.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9966,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "LIGHTING",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_05.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9986,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_06.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "OTHER",
+   "confidence": 0.555,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_07.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9248,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "PARK",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_08.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.7993,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/hf_broken_09.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.7923,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_00.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.8886,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_01.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.8143,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "PARK",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_02.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.8795,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_04.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "WASTE",
+   "confidence": 0.3684,
+   "top3": [
+    "WASTE",
+    "SIDEWALK",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_06.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.8386,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "WASTE",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_07.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.5418,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "WASTE",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_08.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9811,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_09.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9914,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_11.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9697,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_14.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.4388,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "SIDEWALK",
+    "ROAD_DAMAGE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_15.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.985,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_19.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9558,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_20.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9869,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "PARK"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_21.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.804,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "WASTE",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_22.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.7939,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_23.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9421,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_24.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.9863,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "LIGHTING",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_25.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.7466,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_26.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.8706,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "OTHER",
+    "PARK"
+   ]
+  },
+  {
+   "file": "TRAFFIC_SIGN/sf_sign_27.jpg",
+   "actual": "TRAFFIC_SIGN",
+   "predicted": "TRAFFIC_SIGN",
+   "confidence": 0.996,
+   "top3": [
+    "TRAFFIC_SIGN",
+    "LIGHTING",
+    "OTHER"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_00.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9268,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_01.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9927,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_02.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9844,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_03.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9855,
+   "top3": [
+    "OTHER",
+    "LIGHTING",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_04.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9952,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_05.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.998,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_06.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9689,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_07.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.7594,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "PARK"
+   ]
+  },
+  {
+   "file": "OTHER/hf_vandalism_08.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9755,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_02.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.3774,
+   "top3": [
+    "OTHER",
+    "SIDEWALK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_05.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.8449,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_06.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9414,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_07.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.7318,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_10.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.8085,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_13.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.6909,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_14.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.6145,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_15.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.8033,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_16.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9614,
+   "top3": [
+    "OTHER",
+    "TRAFFIC_SIGN",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_18.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.6409,
+   "top3": [
+    "OTHER",
+    "SIDEWALK",
+    "WATER_LEAK"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_20.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9779,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "LIGHTING"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_22.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.4227,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_23.jpg",
+   "actual": "OTHER",
+   "predicted": "WASTE",
+   "confidence": 0.513,
+   "top3": [
+    "WASTE",
+    "OTHER",
+    "SIDEWALK"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_26.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9587,
+   "top3": [
+    "OTHER",
+    "SIDEWALK",
+    "WASTE"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_27.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.8928,
+   "top3": [
+    "OTHER",
+    "WASTE",
+    "TRAFFIC_SIGN"
+   ]
+  },
+  {
+   "file": "OTHER/sf_graffiti_28.jpg",
+   "actual": "OTHER",
+   "predicted": "OTHER",
+   "confidence": 0.9706,
+   "top3": [
+    "OTHER",
+    "SIDEWALK",
+    "ROAD_DAMAGE"
+   ]
+  }
+ ]
+}
