@@ -141,3 +141,27 @@ describe('kurum ekleme', () => {
     expect(JSON.parse(post[1]!.body as string)).toMatchObject({ name: 'İzmir Belediyesi', organizationTypeId: 1, city: 'izmir', district: 'Konak' })
   })
 })
+
+describe('kurum türü seçimi', () => {
+  it('yeni tür alanı yalnızca listedeki "Yeni tür ekle" seçilince açılır, eklenen tür seçili gelir', async () => {
+    const { fetchMock } = await renderPage({ 'POST /institution/api/OrganizationTypes': { status: 201, json: { id: 3, name: 'Elektrik' } } })
+    expect(screen.queryByLabelText('Yeni kurum türü adı')).toBeNull()
+
+    fireEvent.change(screen.getByLabelText('Kurum türü'), { target: { value: '__new__' } })
+    fireEvent.change(screen.getByLabelText('Yeni kurum türü adı'), { target: { value: 'Elektrik' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Tür ekle' }))
+
+    await waitFor(() => expect((screen.getByLabelText('Kurum türü') as HTMLSelectElement).value).toBe('3'))
+    expect(screen.queryByLabelText('Yeni kurum türü adı')).toBeNull()
+    const post = fetchMock.mock.calls.find(([url, init]) => url === '/institution/api/OrganizationTypes' && init?.method === 'POST')!
+    expect(JSON.parse(post[1]!.body as string)).toEqual({ name: 'Elektrik' })
+  })
+
+  it('Vazgeç yeni tür alanını kapatır', async () => {
+    await renderPage()
+    fireEvent.change(screen.getByLabelText('Kurum türü'), { target: { value: '__new__' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Vazgeç' }))
+    expect(screen.queryByLabelText('Yeni kurum türü adı')).toBeNull()
+    expect((screen.getByLabelText('Kurum türü') as HTMLSelectElement).value).toBe('')
+  })
+})

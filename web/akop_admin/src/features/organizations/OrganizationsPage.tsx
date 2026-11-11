@@ -15,6 +15,9 @@ type Organization = {
 type OrganizationType = { id: number; name: string }
 type Errors = { name?: string; type?: string; city?: string }
 
+/** Kurum türü listesindeki "yeni tür ekle" seçeneğinin değeri. */
+const NEW_TYPE = '__new__'
+
 export default function OrganizationsPage({ token, onSignOut }: { token: string; onSignOut: () => void }) {
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [types, setTypes] = useState<OrganizationType[]>([])
@@ -31,6 +34,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
   const [saving, setSaving] = useState(false)
 
   const [newType, setNewType] = useState('')
+  const [addingType, setAddingType] = useState(false)
   const [typeError, setTypeError] = useState('')
 
   const [managerFor, setManagerFor] = useState<Organization | null>(null)
@@ -113,6 +117,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
       setTypes((list) => [...list, created])
       setTypeId(String(created.id))
       setNewType('')
+      setAddingType(false)
     } catch (err) {
       setTypeError(messageOf(err))
     }
@@ -142,22 +147,38 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
 
           <div className="org-field">
             <label htmlFor="org-type">Kurum türü</label>
-            <select id="org-type" value={typeId} onChange={(e) => setTypeId(e.target.value)} aria-invalid={!!errors.type}>
+            <select
+              id="org-type"
+              value={addingType ? NEW_TYPE : typeId}
+              onChange={(e) => {
+                const adding = e.target.value === NEW_TYPE
+                setAddingType(adding)
+                if (!adding) setTypeId(e.target.value)
+              }}
+              aria-invalid={!!errors.type}
+            >
               <option value="">Seçin</option>
               {types.map((t) => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
+              <option value={NEW_TYPE}>+ Listede yok mu? Yeni tür ekle</option>
             </select>
             {errors.type && <span className="org-error">{errors.type}</span>}
-            <div className="org-inline">
-              <input
-                aria-label="Yeni kurum türü adı"
-                placeholder={types.length ? 'Listede yok mu? Yeni tür' : 'İlk kurum türünü ekleyin'}
-                value={newType}
-                onChange={(e) => setNewType(e.target.value)}
-              />
-              <button type="button" className="org-secondary" onClick={addType}>Tür ekle</button>
-            </div>
+            {(addingType || types.length === 0) && (
+              <div className="org-inline">
+                <input
+                  aria-label="Yeni kurum türü adı"
+                  placeholder={types.length ? 'Yeni tür adı' : 'İlk kurum türünü ekleyin'}
+                  value={newType}
+                  onChange={(e) => setNewType(e.target.value)}
+                  autoFocus={addingType}
+                />
+                <button type="button" className="org-secondary" onClick={addType}>Tür ekle</button>
+                {addingType && (
+                  <button type="button" className="org-secondary" onClick={() => setAddingType(false)}>Vazgeç</button>
+                )}
+              </div>
+            )}
             {typeError && <span className="org-error">{typeError}</span>}
           </div>
 
