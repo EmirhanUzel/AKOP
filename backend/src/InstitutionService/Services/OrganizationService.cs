@@ -33,6 +33,7 @@ public class OrganizationService : IOrganizationService
                 OrganizationTypeId = organization.OrganizationTypeId,
                 OrganizationTypeName = organization.OrganizationType.Name,
                 City = organization.City,
+                District = organization.District,
                 ProfileInfo = organization.ProfileInfo,
                 CreatedAt = organization.CreatedAt
             };
@@ -59,6 +60,7 @@ public class OrganizationService : IOrganizationService
                 OrganizationTypeId = organization.OrganizationTypeId,
                 OrganizationTypeName = organization.OrganizationType.Name,
                 City = organization.City,
+                District = organization.District,
                 ProfileInfo = organization.ProfileInfo,
                 CreatedAt = organization.CreatedAt
         };
@@ -72,6 +74,9 @@ public class OrganizationService : IOrganizationService
         var name = dto.Name.Trim();
         var normalizedName = name.ToUpper(culture);
         var city = culture.TextInfo.ToTitleCase(dto.City.Trim().ToLower(culture));
+        var district = string.IsNullOrWhiteSpace(dto.District)
+            ? null
+            : culture.TextInfo.ToTitleCase(dto.District.Trim().ToLower(culture));
         var profileInfo = string.IsNullOrWhiteSpace(dto.ProfileInfo)
             ? null
             : dto.ProfileInfo.Trim();
@@ -100,6 +105,7 @@ public class OrganizationService : IOrganizationService
             NormalizedName = normalizedName,
             OrganizationTypeId = dto.OrganizationTypeId,
             City = city,
+            District = district,
             ProfileInfo = profileInfo
         };
 
@@ -112,6 +118,7 @@ public class OrganizationService : IOrganizationService
             OrganizationTypeId = newOrganization.OrganizationTypeId,
             OrganizationTypeName = organizationType.Name,
             City = newOrganization.City,
+            District = newOrganization.District,
             ProfileInfo = newOrganization.ProfileInfo,
             CreatedAt = newOrganization.CreatedAt
         };
