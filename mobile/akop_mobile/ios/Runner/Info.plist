@@ -24,6 +24,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>İhbar için sorunun fotoğrafını çekebilmeniz için kamera kullanılır.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>İhbara galeriden fotoğraf ekleyebilmeniz için fotoğraflarınıza erişilir.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>İhbarın konumunu haritada otomatik işaretlemek için konumunuz kullanılır.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>İhbar açıklamasını sesle yazabilmeniz için mikrofon kullanılır.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
