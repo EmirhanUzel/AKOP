@@ -142,7 +142,7 @@ describe('iki ayrı giriş', () => {
     expect(screen.getByRole('heading', { name: 'Sistem yöneticisi girişi' })).toBeTruthy()
   })
 
-  it('kurum yöneticisi ana adresten girince kendi kurum bilgilerini görür', async () => {
+  it('kurum yöneticisi ana adresten girince ihbar havuzunu, Kurumum sekmesinde kurum bilgilerini görür', async () => {
     window.history.pushState({}, '', '/')
     mockFetch({ [LOGIN]: { json: { accessToken: 'ktok', role: 'OrgManager' } }, [ORG_ME]: { json: myOrg } })
     render(<App />)
@@ -150,10 +150,15 @@ describe('iki ayrı giriş', () => {
     fireEvent.change(screen.getByLabelText('Şifre'), { target: { value: 'Gizli123!' } })
     fireEvent.click(screen.getByRole('button', { name: 'Giriş yap' }))
 
-    expect(await screen.findByText('Su İdaresi')).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'İhbar havuzu' })).toBeTruthy()
+    await waitFor(() => expect(heading().textContent).toBe('ASKİ'))
+    // Kurum yalnızca kendi sekmelerini görür, sistem yöneticisi bölümlerini görmez
+    const nav = screen.getByRole('navigation', { name: 'Yönetim bölümleri' })
+    expect(within(nav).getAllByRole('button').map((b) => b.textContent)).toEqual(['İhbar havuzu', 'Kurumum'])
+
+    fireEvent.click(within(nav).getByRole('button', { name: 'Kurumum' }))
+    expect(screen.getByText('Su İdaresi')).toBeTruthy()
     expect(heading().textContent).toBe('Kurumum')
-    expect(screen.getByText('ASKİ')).toBeTruthy()
-    expect(screen.queryByRole('navigation', { name: 'Yönetim bölümleri' })).toBeNull()
   })
 
   it('kayıtlı sistem yöneticisi oturumu ana adreste geçerli sayılmaz', () => {
