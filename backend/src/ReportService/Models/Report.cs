@@ -8,6 +8,7 @@ public class Report
     public string? Title { get; set; }
     public string Description { get; set; } = "";
     public string? CategoryCode { get; set; }
+    public string? SubcategoryCode { get; set; }
     public double Latitude {get; set;}
     public double Longitude {get; set;}
     public string? LocationDescription { get; set; }

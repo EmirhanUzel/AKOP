@@ -60,6 +60,10 @@ namespace ReportService.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("SubcategoryCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<string>("Title")
                         .HasMaxLength(120)
                         .HasColumnType("character varying(120)");

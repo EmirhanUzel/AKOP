@@ -31,6 +31,23 @@ public class ReportService : IReportService
             throw new ArgumentException("Geçersiz kategori kodu.");
         }
 
+        var subcategoryCode = string.IsNullOrWhiteSpace(dto.SubcategoryCode)
+            ? null
+            : dto.SubcategoryCode.Trim();
+
+        if (subcategoryCode != null)
+        {
+            if (categoryCode == null)
+            {
+                throw new ArgumentException("Alt kategori seçmek için önce kategori seçilmelidir.");
+            }
+
+            if (!ReportCategories.IsSubcategoryOf(categoryCode, subcategoryCode))
+            {
+                throw new ArgumentException("Alt kategori seçilen kategoriye ait değil.");
+            }
+        }
+
         var locationDescription = string.IsNullOrWhiteSpace(dto.LocationDescription)
             ? null
             : dto.LocationDescription.Trim();
@@ -43,6 +60,7 @@ public class ReportService : IReportService
             Title = title,
             Description = dto.Description.Trim(),
             CategoryCode = categoryCode,
+            SubcategoryCode = subcategoryCode,
             Latitude = dto.Latitude!.Value,
             Longitude = dto.Longitude!.Value,
             LocationDescription = locationDescription
@@ -169,6 +187,24 @@ public class ReportService : IReportService
         return new ReportImageFile(stream, image.ContentType);
     }
 
+    public List<CategoryDto> GetCategories()
+    {
+        return ReportCategories.List
+            .Select(category => new CategoryDto
+            {
+                Code = category.Code,
+                Name = category.Name,
+                Subcategories = category.Subcategories
+                    .Select(subcategory => new SubcategoryDto
+                    {
+                        Code = subcategory.Code,
+                        Name = subcategory.Name
+                    })
+                    .ToList()
+            })
+            .ToList();
+    }
+
     private static ReportResponseDto MapToResponse(Report report)
     {
         return new ReportResponseDto
@@ -177,6 +213,7 @@ public class ReportService : IReportService
             Title = report.Title,
             Description = report.Description,
             CategoryCode = report.CategoryCode,
+            SubcategoryCode = report.SubcategoryCode,
             Latitude = report.Latitude,
             Longitude = report.Longitude,
             LocationDescription = report.LocationDescription,

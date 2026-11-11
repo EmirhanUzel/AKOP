@@ -14,6 +14,9 @@ public class CreateReportDto
     [MaxLength(50)]
     public string? CategoryCode {get; set;}
 
+    [MaxLength(50)]
+    public string? SubcategoryCode {get; set;}
+
     [Required]
     [Range(-90,90)]
     public double? Latitude {get;set;}
