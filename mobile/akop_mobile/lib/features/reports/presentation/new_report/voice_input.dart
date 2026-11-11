@@ -44,7 +44,12 @@ class _VoiceInputButtonState extends State<VoiceInputButton> {
       onStatus: (s) {
         if (s == SpeechToText.doneStatus || s == SpeechToText.notListeningStatus) _stopped();
       },
-      onError: (_) => _stopped(),
+      onError: (e) {
+        _stopped();
+        // Konuşma duyulmadı ya da anlaşılmadıysa söylenir; düğme sessizce kapanmaz
+        final unheard = e.errorMsg == 'error_no_match' || e.errorMsg == 'error_speech_timeout';
+        messenger.showSnackBar(SnackBar(content: Text(unheard ? 'Ses anlaşılamadı. Tekrar deneyin.' : 'Sesle yazma şu an çalışmıyor.')));
+      },
     );
     if (!ready) {
       messenger.showSnackBar(const SnackBar(content: Text('Sesle yazma kullanılamıyor. Mikrofon iznini kontrol edin.')));
