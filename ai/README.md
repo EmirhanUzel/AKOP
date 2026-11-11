@@ -23,7 +23,7 @@ Mobil uygulama ve ReportService ile aynı kodlar:
 
 1. **Zero-shot (ilk prototip):** Önceden eğitilmiş CLIP modeli. Her kategori için metin tarifleri yazılır; fotoğraf en çok benzediği tarifin kategorisine atanır. Eğitim gerektirmez.
 2. **Linear probe (iyileştirme):** CLIP'in görsel temsilleri üzerinde, toplanan fotoğraflarla küçük bir sınıflandırıcı eğitilir.
-3. **Dışa aktarma:** CLIP'in görsel kodlayıcısı ONNX'e çevrilir; kategori metinlerinin temsilleri önceden hesaplanıp dosyaya yazılır.
+3. **Dışa aktarma:** CLIP'in görsel kodlayıcısı ve linear probe tek ONNX dosyasında birleştirilir (`models/akop_category.onnx`). Girdi: ön işlenmiş fotoğraf `[N,3,224,224]`; çıktı: 8 kategorinin olasılıkları `[N,8]`. Ön işleme ayarları ve sınıf sırası `models/akop_category.json` dosyasında.
 4. **Entegrasyon:** ReportService'te `POST /api/Reports/category-suggestions` uç noktası, ilk 3 kategoriyi güven skoruyla döner. Güven düşükse öneri verilmez.
 
 ## Klasör yapısı
@@ -59,6 +59,7 @@ Test seti: 8 kategoride 212 fotoğraf (SF 311 + Road Issues, elle kontrol edildi
 | `zero_shot_v3_cleaned` | Zero-shot, yanlış etiketli 18 fotoğraf çıkarıldı | 212 | %79.7 | %93.9 |
 | **`linear_probe_v1`** | **CLIP + lojistik regresyon (C=100, 5 katlı çapraz doğrulamayla seçildi)** | **212** | **%88.7** | **%99.1** |
 | `linear_probe_v1_plus_zero_shot` | Yarı yarıya karışım | 212 | %87.7 | %98.6 |
+| `onnx_v1` | `linear_probe_v1`'in ONNX hali (ONNX Runtime, PyTorch'suz ön işleme) | 212 | %88.7 | %99.1 |
 
 Notlar:
 - `zero_shot_v3_cleaned` için test setinden çıkarılan 18 fotoğraf hatalı tahminlere bakılarak bulundu (etiketi yanlış ya da belirsiz olanlar, havadan çekilmiş otopark görselleri). Bu, sonucu bir miktar iyimser gösterebilir; temizlik öncesi sonuçlar da saklandı.
@@ -74,9 +75,19 @@ cd ai
 .venv/bin/python scripts/download_train.py --per-category 150         # eğitim fotoğrafları
 cd scripts && ../.venv/bin/python train_linear_probe.py               # linear probe eğitimi + ölçüm
 .venv/bin/python scripts/predict.py foto1.jpg foto2.jpg               # tek fotoğraf için ilk 3 öneri
+.venv/bin/python scripts/export_onnx.py                               # ONNX'e aktarma + PyTorch ile karşılaştırma
 ```
 
-Linear probe ağırlıkları `models/linear_probe.json` dosyasına yazılır (Git dışı).
+Linear probe ağırlıkları `models/linear_probe.json`, ONNX modeli `models/akop_category.onnx` (~350 MB) dosyasına yazılır (Git dışı).
+
+### Ön işleme (ReportService ile birebir aynı olmalı)
+
+1. EXIF yönüne göre döndür, RGB'ye çevir.
+2. Kısa kenarı 224 piksele getir; uzun kenar `int(224 · uzun / kısa)` (aşağı yuvarlanır). Bicubic.
+3. Ortadan 224×224 kırp; başlangıç `round((kenar - 224) / 2)`.
+4. Pikselleri 255'e böl, kanal bazında `(x - mean) / std` uygula, `[1,3,224,224]` (RGB, CHW) tensöre çevir.
+
+Uzun kenarın yuvarlanması bile sonucu değiştirir: ilk denemede en yakına yuvarlandığında 22 fotoğrafın 2'sinde tahmin farklı çıktı.
 
 ## Veri kaynakları
 
