@@ -115,7 +115,7 @@ describe('kurum ekleme', () => {
     const { fetchMock } = await renderPage({
       [NEW_ORG]: {
         status: 201,
-        json: { id: 'org-3', name: 'İzmir Belediyesi', organizationTypeName: 'Belediye', city: 'İzmir', profileInfo: null, createdAt: '2026-11-01T10:00:00Z' },
+        json: { id: 'org-3', name: 'İzmir Belediyesi', organizationTypeName: 'Belediye', city: 'İzmir', district: 'Konak', profileInfo: null, createdAt: '2026-11-01T10:00:00Z' },
       },
     })
     const submit = screen.getAllByRole('button', { name: 'Kurum ekle' }).find((b) => (b as HTMLButtonElement).type === 'submit')!
@@ -126,6 +126,7 @@ describe('kurum ekleme', () => {
 
     fireEvent.change(screen.getByLabelText('Kurum adı'), { target: { value: 'İzmir Belediyesi' } })
     fireEvent.change(screen.getByLabelText('Şehir'), { target: { value: 'izmir' } })
+    fireEvent.change(screen.getByLabelText('İlçe (isteğe bağlı)'), { target: { value: ' Konak ' } })
     fireEvent.change(screen.getByLabelText('Kurum türü'), { target: { value: '1' } })
     fireEvent.click(submit)
 
@@ -135,7 +136,8 @@ describe('kurum ekleme', () => {
       return r
     })
     expect(rows).toHaveLength(4)
+    expect(rows[1].textContent).toContain('İzmir / Konak')
     const post = fetchMock.mock.calls.find(([url, init]) => url === '/institution/api/Organizations' && init?.method === 'POST')!
-    expect(JSON.parse(post[1]!.body as string)).toMatchObject({ name: 'İzmir Belediyesi', organizationTypeId: 1, city: 'izmir' })
+    expect(JSON.parse(post[1]!.body as string)).toMatchObject({ name: 'İzmir Belediyesi', organizationTypeId: 1, city: 'izmir', district: 'Konak' })
   })
 })

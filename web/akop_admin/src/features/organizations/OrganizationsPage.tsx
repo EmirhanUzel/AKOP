@@ -8,6 +8,7 @@ type Organization = {
   name: string
   organizationTypeName: string
   city: string
+  district: string | null
   profileInfo: string | null
   createdAt: string
 }
@@ -23,6 +24,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
   const [name, setName] = useState('')
   const [typeId, setTypeId] = useState('')
   const [city, setCity] = useState('')
+  const [district, setDistrict] = useState('')
   const [profileInfo, setProfileInfo] = useState('')
   const [errors, setErrors] = useState<Errors>({})
   const [formError, setFormError] = useState('')
@@ -81,6 +83,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
             name,
             organizationTypeId: Number(typeId),
             city,
+            district: district.trim() || null,
             profileInfo: profileInfo || null,
           }),
         },
@@ -89,6 +92,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
       setOrganizations((list) => [created, ...list])
       setName('')
       setCity('')
+      setDistrict('')
       setProfileInfo('')
     } catch (err) {
       setFormError(messageOf(err))
@@ -129,6 +133,11 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
             <label htmlFor="org-city">Şehir</label>
             <input id="org-city" value={city} onChange={(e) => setCity(e.target.value)} aria-invalid={!!errors.city} />
             {errors.city && <span className="org-error">{errors.city}</span>}
+          </div>
+
+          <div className="org-field">
+            <label htmlFor="org-district">İlçe (isteğe bağlı)</label>
+            <input id="org-district" maxLength={100} value={district} onChange={(e) => setDistrict(e.target.value)} />
           </div>
 
           <div className="org-field">
@@ -193,7 +202,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
                 <tr>
                   <th>Kurum</th>
                   <th>Tür</th>
-                  <th>Şehir</th>
+                  <th>Şehir / İlçe</th>
                   <th>Eklenme</th>
                   <th><span className="org-sr">İşlemler</span></th>
                 </tr>
@@ -206,7 +215,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
                       {o.profileInfo && <div className="org-sub">{o.profileInfo}</div>}
                     </td>
                     <td>{o.organizationTypeName}</td>
-                    <td>{o.city}</td>
+                    <td>{o.district ? `${o.city} / ${o.district}` : o.city}</td>
                     <td>{new Date(o.createdAt).toLocaleDateString('tr-TR')}</td>
                     <td>
                       <button
