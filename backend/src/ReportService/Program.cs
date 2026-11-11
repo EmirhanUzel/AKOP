@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
+using ReportService.Classification;
 using ReportService.Constants;
 using ReportService.Data;
 using ReportService.ModelBinding;
@@ -41,6 +42,10 @@ builder.Services.AddScoped<IReportService, ReportService.Services.ReportService>
 
 // Fotoğraf dosyaları (şimdilik disk; ileride S3 uyumlu depolama)
 builder.Services.AddSingleton<IFileStorage, DiskFileStorage>();
+
+// Fotoğraftan kategori önerisi (ONNX modeli bir kez yüklenir, tüm isteklerde paylaşılır)
+builder.Services.AddSingleton<ICategoryClassifier, OnnxCategoryClassifier>();
+builder.Services.AddScoped<ICategorySuggestionService, CategorySuggestionService>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException("JWT anahtarı bulunamadı.");
@@ -83,6 +88,9 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+// Model ilk istekte değil, açılışta yüklensin (~350 MB)
+app.Services.GetRequiredService<ICategoryClassifier>();
 
 // Development ortamında OpenAPI
 if (app.Environment.IsDevelopment())
