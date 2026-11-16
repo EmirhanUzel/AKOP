@@ -3,27 +3,30 @@ import './AdminLayout.css'
 
 export type AdminPage = 'organizations' | 'types'
 
-const PAGES: { id: AdminPage; label: string }[] = [
+const ADMIN_PAGES: { id: AdminPage; label: string }[] = [
   { id: 'organizations', label: 'Kurumlar' },
   { id: 'types', label: 'Kurum türleri' },
 ]
 
-type Props = {
-  page?: AdminPage
-  onNavigate?: (page: AdminPage) => void
+type Props<P extends string> = {
+  /** Üst menüdeki bölümler; verilmezse sistem yöneticisi bölümleri. */
+  pages?: { id: P; label: string }[]
+  page?: P
+  onNavigate?: (page: P) => void
   onSignOut: () => void
   title: string
   children: ReactNode
 }
 
-export default function AdminLayout({ page, onNavigate, onSignOut, title, children }: Props) {
+export default function AdminLayout<P extends string = AdminPage>({ pages, page, onNavigate, onSignOut, title, children }: Props<P>) {
+  const items = pages ?? (ADMIN_PAGES as { id: P; label: string }[])
   return (
     <div className="admin-page">
       <header className="admin-topbar">
         <img className="admin-logo" src="/akop-logo.png" alt="AKOP" />
         {onNavigate && (
           <nav className="admin-nav" aria-label="Yönetim bölümleri">
-            {PAGES.map((p) => (
+            {items.map((p) => (
               <button key={p.id} type="button" aria-current={p.id === page ? 'page' : undefined} onClick={() => onNavigate(p.id)}>
                 {p.label}
               </button>

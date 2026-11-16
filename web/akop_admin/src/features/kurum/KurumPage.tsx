@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ApiError, INSTITUTION_API, request } from '../../core/api/http'
 import AdminLayout from '../../shared/components/AdminLayout'
+import PoolPage from './PoolPage'
 import '../organizations/OrganizationsPage.css'
 import './KurumPage.css'
 
@@ -13,10 +14,18 @@ type Organization = {
   createdAt: string
 }
 
-/** Kurum yöneticisinin kendi kurumunu gördüğü sayfa (GET /api/Organizations/me). */
+type KurumTab = 'pool' | 'org'
+
+const TABS: { id: KurumTab; label: string }[] = [
+  { id: 'pool', label: 'İhbar havuzu' },
+  { id: 'org', label: 'Kurumum' },
+]
+
+/** Kurum paneli: ihbar havuzu ve kurum bilgileri (GET /api/Organizations/me). */
 export default function KurumPage({ token, onSignOut }: { token: string; onSignOut: () => void }) {
   const [org, setOrg] = useState<Organization | null>(null)
   const [error, setError] = useState('')
+  const [tab, setTab] = useState<KurumTab>('pool')
 
   useEffect(() => {
     let active = true
@@ -33,8 +42,14 @@ export default function KurumPage({ token, onSignOut }: { token: string; onSignO
   }, [token, onSignOut])
 
   return (
-    <AdminLayout onSignOut={onSignOut} title="Kurumum">
-      <section className="org-card" aria-labelledby="kurum-title">
+    <AdminLayout
+      pages={TABS}
+      page={tab}
+      onNavigate={setTab}
+      onSignOut={onSignOut}
+      title={tab === 'pool' ? org?.name ?? 'İhbar havuzu' : 'Kurumum'}
+    >
+      {tab === 'pool' ? <PoolPage /> : <section className="org-card" aria-labelledby="kurum-title">
         <h2 id="kurum-title">Kurum bilgileri</h2>
         {error && <p className="org-form-error" role="alert">{error}</p>}
         {!org && !error && <p className="org-note">Yükleniyor…</p>}
@@ -62,7 +77,7 @@ export default function KurumPage({ token, onSignOut }: { token: string; onSignO
             <dd>{new Date(org.createdAt).toLocaleDateString('tr-TR')}</dd>
           </dl>
         )}
-      </section>
+      </section>}
     </AdminLayout>
   )
 }
