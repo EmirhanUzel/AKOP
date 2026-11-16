@@ -40,6 +40,15 @@ class _FakeAdapter implements HttpClientAdapter {
 
 const _created = (201, {'id': 'r1', 'status': 'Pending'});
 
+const _categories = {
+  'GET http://report/api/Reports/categories': (200, [
+    {'code': 'SIDEWALK', 'name': 'Kaldırım', 'subcategories': [{'code': 'CURB_DAMAGE', 'name': 'Bordür hasarı'}]},
+    {'code': 'OTHER', 'name': 'Diğer', 'subcategories': []},
+  ]),
+};
+
+const _suggestUrl = 'POST http://report/api/Reports/category-suggestions';
+
 void main() {
   test('liste: alanları eşler, yeniden eskiye sıralar', () async {
     final (repo, _) = _repo({
@@ -47,6 +56,7 @@ void main() {
         {'id': 'a', 'title': null, 'description': 'Çukur', 'categoryCode': 'SIDEWALK', 'latitude': 39.9, 'longitude': 32.8, 'locationDescription': null, 'status': 'Pending', 'createdAt': '2026-11-01T10:00:00Z'},
         {'id': 'b', 'title': 'Lamba yanmıyor', 'description': 'x', 'categoryCode': null, 'latitude': 39.9, 'longitude': 32.8, 'locationDescription': 'Okul önü', 'status': 'InProgress', 'createdAt': '2026-11-05T10:00:00Z'},
       ]),
+      ..._categories,
     });
     final list = await repo.myReports();
     expect(list.map((r) => r.id), ['b', 'a']);
@@ -89,6 +99,71 @@ void main() {
     final form = adapter.calls.single.data as FormData;
     expect(Map.fromEntries(form.fields), {'description': 'd', 'categoryCode': 'PARK', 'latitude': '39.92', 'longitude': '32.85'});
     expect(form.files.map((f) => f.key), ['files', 'files']);
+  });
+
+  test('oluşturma: alt kategori gönderilir', () async {
+    final (repo, adapter) = _repo({'POST http://report/api/Reports': _created});
+    await repo.create(const NewReport(photos: ['a'], lat: 1, lng: 2, description: 'd', categoryCode: 'SIDEWALK', subcategoryCode: 'CURB_DAMAGE'));
+    final form = adapter.calls.single.data as FormData;
+    expect(Map.fromEntries(form.fields)['subcategoryCode'], 'CURB_DAMAGE');
+  });
+
+  test('kategoriler: alt kategorileriyle eşlenir, ikinci çağrıda istek atılmaz', () async {
+    final (repo, adapter) = _repo(_categories);
+    final list = await repo.categories();
+    expect(list.map((c) => c.code), ['SIDEWALK', 'OTHER']);
+    expect(list.first.subcategories.single.name, 'Bordür hasarı');
+    await repo.categories();
+    expect(adapter.calls, hasLength(1));
+  });
+
+  test('liste: kategoriler gelmezse başlıksız ihbar yine listelenir', () async {
+    final (repo, _) = _repo({
+      'GET http://report/api/Reports/mine': (200, [
+        {'id': 'a', 'title': null, 'description': 'Çukur', 'categoryCode': 'SIDEWALK', 'latitude': 39.9, 'longitude': 32.8, 'status': 'Pending', 'createdAt': '2026-11-01T10:00:00Z'},
+      ]),
+    });
+    expect((await repo.myReports()).single.title, 'Çukur');
+  });
+
+  test('öneri: File alanında tek fotoğraf, yanıt eşlenir', () async {
+    final (repo, adapter) = _repo({
+      _suggestUrl: (200, {
+        'suggestions': [
+          {'code': 'ROAD_DAMAGE', 'name': 'Yol hasarı', 'confidence': 0.845},
+          {'code': 'SIDEWALK', 'name': 'Kaldırım', 'confidence': 0.1484},
+          {'code': 'WATER_LEAK', 'name': 'Su ve kanalizasyon', 'confidence': 0.004},
+        ],
+        'isConfident': true,
+        'selectedCategory': null,
+      }),
+    });
+    final s = await repo.suggestCategory('a');
+    final form = adapter.calls.single.data as FormData;
+    expect(form.files.map((f) => f.key), ['File']);
+    expect(form.fields, isEmpty);
+    expect(s.isConfident, isTrue);
+    expect(s.suggestions.map((g) => g.code), ['ROAD_DAMAGE', 'SIDEWALK', 'WATER_LEAK']);
+    expect(s.suggestions.first.confidence, 0.845);
+    expect(s.matchesImage, isNull);
+  });
+
+  test('öneri: CategoryCode gönderilince matchesImage gelir', () async {
+    final (repo, adapter) = _repo({
+      _suggestUrl: (200, {
+        'suggestions': [],
+        'isConfident': false,
+        'selectedCategory': {'code': 'LIGHTING', 'confidence': 0, 'matchesImage': false},
+      }),
+    });
+    final s = await repo.suggestCategory('a', categoryCode: 'LIGHTING');
+    expect(Map.fromEntries((adapter.calls.single.data as FormData).fields), {'CategoryCode': 'LIGHTING'});
+    expect(s.matchesImage, isFalse);
+  });
+
+  test('öneri: model yoksa (503) NetworkFailure', () async {
+    final (repo, _) = _repo({_suggestUrl: (503, null)});
+    expect(repo.suggestCategory('a'), throwsA(isA<NetworkFailure>()));
   });
 
   test('oluşturma: 400 gövdesindeki mesaj ReportRejected ile gelir', () async {

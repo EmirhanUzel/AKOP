@@ -7,6 +7,7 @@ class NewReport {
     required this.description,
     this.title,
     this.categoryCode,
+    this.subcategoryCode,
     this.locationDescription,
   });
 
@@ -16,5 +17,6 @@ class NewReport {
   final String description;
   final String? title;
   final String? categoryCode;
+  final String? subcategoryCode;
   final String? locationDescription;
 }

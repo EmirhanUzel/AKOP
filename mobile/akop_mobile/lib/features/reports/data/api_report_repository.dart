@@ -19,7 +19,8 @@ Future<MultipartFile> jpegPart(String path) async {
   return MultipartFile.fromBytes(bytes, filename: 'photo.jpg', contentType: DioMediaType('image', 'jpeg'));
 }
 
-/// ReportService ile konuşur: GET /api/Reports/mine ve POST /api/Reports
+/// ReportService ile konuşur: GET /api/Reports/mine, GET /api/Reports/categories,
+/// POST /api/Reports/category-suggestions ve POST /api/Reports
 /// (multipart/form-data: metin alanları + `files` alanında 1-5 fotoğraf, tek istekte).
 /// Token ve 401 yenilemesi paylaşılan Dio'daki auth interceptor'ından gelir.
 class ApiReportRepository implements ReportRepository {
@@ -28,11 +29,14 @@ class ApiReportRepository implements ReportRepository {
   final Dio _dio;
   final String _baseUrl;
   final PhotoEncoder _encode;
+  List<ReportCategory>? _categories;
 
   @override
   Future<List<Report>> myReports() async {
     final data = _ok(await _call(() => _dio.get<dynamic>('$_baseUrl/api/Reports/mine')));
-    final list = data is List ? data.whereType<Map<String, dynamic>>().map(_report).toList() : <Report>[];
+    // Kategori adı yalnızca başlıksız ihbarlarda başlık olur; gelmezse liste yine açılır
+    final categories = await this.categories().then<List<ReportCategory>?>((c) => c, onError: (_) => null);
+    final list = data is List ? data.whereType<Map<String, dynamic>>().map((j) => _report(j, categories)).toList() : <Report>[];
     return list..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
@@ -42,6 +46,7 @@ class ApiReportRepository implements ReportRepository {
       if (r.title != null) 'title': r.title,
       'description': r.description,
       if (r.categoryCode != null) 'categoryCode': r.categoryCode,
+      if (r.subcategoryCode != null) 'subcategoryCode': r.subcategoryCode,
       'latitude': r.lat, // Dart double'ı nokta ile yazar (39.92), sunucu bunu bekler
       'longitude': r.lng,
       if (r.locationDescription != null) 'locationDescription': r.locationDescription,
@@ -59,18 +64,54 @@ class ApiReportRepository implements ReportRepository {
     return Uint8List.fromList((_ok(res) as List).cast<int>());
   }
 
-  Report _report(Map<String, dynamic> j) {
+  /// Liste oturum boyunca değişmez; ilk başarılı yanıt saklanır.
+  @override
+  Future<List<ReportCategory>> categories() async {
+    if (_categories case final c?) return c;
+    final data = _ok(await _call(() => _dio.get<dynamic>('$_baseUrl/api/Reports/categories')));
+    if (data is! List) throw NetworkFailure();
+    return _categories = [
+      for (final c in data.whereType<Map<String, dynamic>>())
+        ReportCategory(c['code'] as String, c['name'] as String, [
+          for (final s in (c['subcategories'] as List? ?? const []).whereType<Map<String, dynamic>>())
+            ReportSubcategory(s['code'] as String, s['name'] as String),
+        ]),
+    ];
+  }
+
+  /// 503 (model yok) dahil her hata NetworkFailure olur; çağıran öneriyi göstermeden devam eder.
+  @override
+  Future<CategorySuggestion> suggestCategory(String photo, {String? categoryCode}) async {
+    final form = FormData.fromMap({
+      'File': await _encode(photo),
+      'CategoryCode': ?categoryCode,
+    });
+    final data = _ok(await _call(() => _dio.post<dynamic>('$_baseUrl/api/Reports/category-suggestions', data: form)));
+    if (data is! Map) throw NetworkFailure();
+    final selected = data['selectedCategory'];
+    return CategorySuggestion(
+      suggestions: [
+        for (final g in (data['suggestions'] as List? ?? const []).whereType<Map<String, dynamic>>())
+          CategoryGuess(g['code'] as String, g['name'] as String, (g['confidence'] as num).toDouble()),
+      ],
+      isConfident: data['isConfident'] == true,
+      matchesImage: selected is Map ? selected['matchesImage'] as bool? : null,
+    );
+  }
+
+  Report _report(Map<String, dynamic> j, List<ReportCategory>? categories) {
     final title = j['title'] as String?;
     final code = j['categoryCode'] as String?;
     final place = j['locationDescription'] as String?;
     final status = (j['status'] as String? ?? '').toLowerCase();
     return Report(
       id: j['id'].toString(),
-      title: title ?? categoryOf(code)?.name ?? j['description'] as String? ?? '',
+      title: title ?? categoryOf(categories, code)?.name ?? j['description'] as String? ?? '',
       status: ReportStatus.values.firstWhere((s) => s.name.toLowerCase() == status, orElse: () => ReportStatus.pending),
       createdAt: DateTime.parse(j['createdAt'] as String).toLocal(),
       locationText: place ?? '${(j['latitude'] as num).toStringAsFixed(5)}, ${(j['longitude'] as num).toStringAsFixed(5)}',
       categoryCode: code,
+      subcategoryCode: j['subcategoryCode'] as String?,
       description: j['description'] as String? ?? '',
       imageUrls: [...?(j['imageUrls'] as List?)?.whereType<String>()],
     );

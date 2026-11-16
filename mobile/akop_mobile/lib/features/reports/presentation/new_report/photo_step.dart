@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../application/draft_controller.dart';
+import '../../application/report_providers.dart';
 import 'photo_widgets.dart';
 import 'step_scaffold.dart';
 
@@ -16,6 +17,23 @@ class PhotoStep extends ConsumerWidget {
     final photos = ref.watch(draftProvider.select((d) => d.photos));
     final draft = ref.read(draftProvider.notifier);
     final full = photos.length >= maxPhotos;
+
+    // Öneri ilk fotoğraf seçilir seçilmez istenir; sonuç Detay adımında kullanılır
+    final query = photos.isEmpty ? null : (photo: photos.first, category: null);
+    final suggesting = query != null && ref.watch(categorySuggestionProvider(query)).isLoading;
+    if (query != null) {
+      ref.listen(categorySuggestionProvider(query), (_, next) {
+        if (next.isLoading) return;
+        final d = ref.read(draftProvider);
+        if (d.categoryCode != null && !d.categoryAuto) return; // kullanıcının seçimi korunur
+        final s = next.value;
+        if (s != null && s.isConfident && s.suggestions.isNotEmpty) {
+          draft.setCategory(s.suggestions.first.code, auto: true);
+        } else if (d.categoryAuto) {
+          draft.setCategory(null); // ilk fotoğraf değişti, yeni fotoğraf için emin öneri yok
+        }
+      });
+    }
 
     Future<void> camera() async {
       if (full) return;
@@ -110,6 +128,7 @@ class PhotoStep extends ConsumerWidget {
                   ),
                   const SizedBox(height: 8),
                   PhotoStrip(photos: photos, onRemove: draft.removePhoto, onAdd: full ? null : gallery),
+                  if (suggesting) const Padding(padding: EdgeInsets.only(top: 8), child: SuggestingIndicator()),
                 ],
               ),
             ),

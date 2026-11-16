@@ -28,6 +28,21 @@ class _FakeAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+/// /upload eski token ile 401 verir; gövde gerçek gönderimdeki gibi okunur.
+class _ExpiringAdapter extends _FakeAdapter {
+  _ExpiringAdapter(super.routes);
+
+  @override
+  Future<ResponseBody> fetch(RequestOptions options, Stream<List<int>>? body, Future<void>? cancel) async {
+    await body?.drain<void>();
+    if (options.path == '/upload' && options.headers['Authorization'] == 'Bearer tok') {
+      calls.add(options);
+      return ResponseBody.fromString('', 401);
+    }
+    return super.fetch(options, null, cancel);
+  }
+}
+
 (ApiAuthRepository, _FakeAdapter) _repo(Map<String, (int, Object?)> routes) {
   final adapter = _FakeAdapter(routes);
   final dio = Dio(BaseOptions(baseUrl: 'http://test', validateStatus: (s) => s != null && s < 500))..httpClientAdapter = adapter;
@@ -91,6 +106,22 @@ void main() {
   test('parola değiştirme: sunucu kapalıysa NetworkFailure verir', () async {
     final (repo, _) = _repo({});
     expect(repo.changePassword('a@b.co', 'Eski1!', 'Yeni1!x'), throwsA(isA<NetworkFailure>()));
+  });
+
+  test('401 sonrası fotoğraflı (FormData) istek yeni token ile tekrar gönderilir', () async {
+    final adapter = _ExpiringAdapter({
+      'POST /api/Auth/login': (200, {'accessToken': 'tok', 'refreshToken': 'r1'}),
+      'GET /api/Users/me': _meOk,
+      'POST /api/Auth/refresh': (200, {'accessToken': 'tok2', 'refreshToken': 'r2'}),
+      'POST /upload': (200, {'ok': true}),
+    });
+    final dio = Dio(BaseOptions(baseUrl: 'http://test', validateStatus: (s) => s != null && s < 500))..httpClientAdapter = adapter;
+    final repo = ApiAuthRepository(dio, MemoryTokenStore());
+    await repo.signIn('ali@akop.test', 'Sifre1!');
+    final form = FormData.fromMap({'File': MultipartFile.fromBytes([1, 2, 3], filename: 'photo.jpg')});
+    final res = await dio.post<dynamic>('/upload', data: form);
+    expect(res.statusCode, 200);
+    expect(adapter.calls.last.headers['Authorization'], 'Bearer tok2');
   });
 
   test('giriş: 401 InvalidCredentials verir', () async {

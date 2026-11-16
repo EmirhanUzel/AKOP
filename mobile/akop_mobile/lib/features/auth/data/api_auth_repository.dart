@@ -119,6 +119,7 @@ class ApiAuthRepository implements AuthRepository {
       }
       o.extra['retried'] = true;
       o.headers['Authorization'] = 'Bearer $_access';
+      if (o.data is FormData) o.data = (o.data as FormData).clone(); // FormData bir kez gönderilebilir
       h.resolve(await _dio.fetch<dynamic>(o));
     } on NetworkFailure {
       h.next(res); // yenileme için sunucuya ulaşılamadı; oturumu düşürme

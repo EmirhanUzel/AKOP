@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// 1x1 PNG.
 final _png = base64Decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==');
 
-class _Photos implements ReportRepository {
+class _Photos extends FakeReportRepository {
   final requested = <String>[];
 
   @override
@@ -45,7 +45,7 @@ Future<_Photos> _open(WidgetTester tester, Report report) async {
   return repo;
 }
 
-Report _report({List<String> imageUrls = const []}) => Report(
+Report _report({List<String> imageUrls = const [], String? category, String? subcategory}) => Report(
       id: 'a',
       title: 'Kaldırımda çukur var',
       status: ReportStatus.inProgress,
@@ -53,6 +53,8 @@ Report _report({List<String> imageUrls = const []}) => Report(
       locationText: 'Okul önü',
       description: 'Taşlar kırık',
       imageUrls: imageUrls,
+      categoryCode: category,
+      subcategoryCode: subcategory,
     );
 
 void main() {
@@ -69,6 +71,11 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('2 / 2'), findsOneWidget);
     expect(repo.requested, contains('/api/Reports/a/images/2'));
+  });
+
+  testWidgets('kategori alt kategorisiyle birlikte gösterilir', (tester) async {
+    await _open(tester, _report(category: 'PARK', subcategory: 'BENCH'));
+    expect(find.text('Park ve yeşil alan · Bank veya oturma alanı'), findsOneWidget);
   });
 
   testWidgets('fotoğrafsız ihbarda fotoğraf alanı ve sayaç yok', (tester) async {

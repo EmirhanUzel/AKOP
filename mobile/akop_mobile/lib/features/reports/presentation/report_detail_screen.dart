@@ -9,14 +9,15 @@ import '../domain/report_category.dart';
 import 'report_card.dart';
 
 /// İhbar detayı: fotoğraflar (kaydırılır), durum, açıklama ve konum. Liste ekranındaki [Report] ile açılır.
-class ReportDetailScreen extends StatelessWidget {
+class ReportDetailScreen extends ConsumerWidget {
   const ReportDetailScreen({super.key, required this.report});
 
   final Report report;
 
   @override
-  Widget build(BuildContext context) {
-    final category = categoryOf(report.categoryCode);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final category = categoryOf(ref.watch(reportCategoriesProvider).value, report.categoryCode);
+    final sub = category?.subcategories.where((s) => s.code == report.subcategoryCode).firstOrNull;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -40,7 +41,7 @@ class ReportDetailScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Chip(
               avatar: Icon(category.icon, size: 16, color: AppColors.navy),
-              label: Text(category.name),
+              label: Text(sub == null ? category.name : '${category.name} · ${sub.name}'),
               backgroundColor: AppColors.neutralBg,
               side: BorderSide.none,
               shape: const StadiumBorder(),

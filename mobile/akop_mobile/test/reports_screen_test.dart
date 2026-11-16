@@ -13,7 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class _FailingRepository implements ReportRepository {
+class _FailingRepository extends FakeReportRepository {
   int failures = 1;
 
   @override

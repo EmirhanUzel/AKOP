@@ -1,7 +1,9 @@
 import 'dart:typed_data';
 
+import '../../auth/data/auth_repository.dart';
 import '../domain/new_report.dart';
 import '../domain/report.dart';
+import '../domain/report_category.dart';
 
 /// Sunucu ihbarı reddetti (ör. fotoğraf kuralı); [message] kullanıcıya gösterilir.
 class ReportRejected implements Exception {
@@ -19,6 +21,12 @@ abstract interface class ReportRepository {
 
   /// [Report.imageUrls] içindeki bir fotoğrafın baytları.
   Future<Uint8List> image(String path);
+
+  /// Kategoriler ve alt kategorileri.
+  Future<List<ReportCategory>> categories();
+
+  /// Fotoğraftan kategori önerisi; [categoryCode] verilirse fotoğrafla uyumu da döner.
+  Future<CategorySuggestion> suggestCategory(String photo, {String? categoryCode});
 }
 
 /// ReportService API'si hazır olana kadar kullanılan sahte sürüm: tek örnek ihbar döner.
@@ -51,4 +59,15 @@ class FakeReportRepository implements ReportRepository {
 
   @override
   Future<Uint8List> image(String path) async => Uint8List(0);
+
+  @override
+  Future<List<ReportCategory>> categories() async => const [
+        ReportCategory('SIDEWALK', 'Kaldırım'),
+        ReportCategory('PARK', 'Park ve yeşil alan', [ReportSubcategory('BENCH', 'Bank veya oturma alanı')]),
+        ReportCategory('OTHER', 'Diğer'),
+      ];
+
+  /// Öneri servisi kapalıymış gibi davranır; ihbar akışı öneri olmadan sürer.
+  @override
+  Future<CategorySuggestion> suggestCategory(String photo, {String? categoryCode}) async => throw NetworkFailure();
 }

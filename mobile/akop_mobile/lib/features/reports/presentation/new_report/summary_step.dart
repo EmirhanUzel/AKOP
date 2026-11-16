@@ -52,7 +52,8 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
   @override
   Widget build(BuildContext context) {
     final draft = ref.watch(draftProvider);
-    final cat = categoryOf(draft.categoryCode);
+    final cat = categoryOf(ref.watch(reportCategoriesProvider).value, draft.categoryCode);
+    final sub = cat?.subcategories.where((s) => s.code == draft.subcategoryCode).firstOrNull;
     final title = draft.title.trim();
     return StepScaffold(
       step: 4,
@@ -115,7 +116,7 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
                   const SizedBox(height: 8),
                   Chip(
                     avatar: Icon(cat.icon, size: 16, color: AppColors.navy),
-                    label: Text(cat.name),
+                    label: Text(sub == null ? cat.name : '${cat.name} · ${sub.name}'),
                     backgroundColor: AppColors.neutralBg,
                     side: BorderSide.none,
                     shape: const StadiumBorder(),

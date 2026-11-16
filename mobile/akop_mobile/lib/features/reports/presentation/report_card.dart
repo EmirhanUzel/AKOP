@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../application/report_providers.dart';
 import '../domain/report.dart';
 import '../domain/report_category.dart';
 
@@ -13,15 +15,15 @@ String relativeTime(DateTime time, DateTime now) {
   return '${diff.inDays} gün önce';
 }
 
-class ReportCard extends StatelessWidget {
+class ReportCard extends ConsumerWidget {
   const ReportCard({super.key, required this.report, this.onTap});
 
   final Report report;
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final category = categoryOf(report.categoryCode);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final category = categoryOf(ref.watch(reportCategoriesProvider).value, report.categoryCode);
     return Material(
       color: AppColors.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: AppColors.border)),
@@ -43,7 +45,8 @@ class ReportCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(report.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                if (category != null) ...[
+                // Başlıksız ihbarda başlık zaten kategori adıdır; ikinci kez yazılmaz
+                if (category != null && category.name != report.title) ...[
                   const SizedBox(height: 2),
                   Text(category.name, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
                 ],

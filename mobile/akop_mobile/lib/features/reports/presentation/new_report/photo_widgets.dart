@@ -104,3 +104,17 @@ class PhotoStrip extends StatelessWidget {
     );
   }
 }
+
+/// Fotoğraftan kategori önerisi beklenirken gösterilen küçük satır.
+class SuggestingIndicator extends StatelessWidget {
+  const SuggestingIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) => const Row(
+        children: [
+          SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+          SizedBox(width: 8),
+          Expanded(child: Text('Fotoğraftan kategori öneriliyor…', style: TextStyle(fontSize: 12, color: AppColors.textSecondary))),
+        ],
+      );
+}
