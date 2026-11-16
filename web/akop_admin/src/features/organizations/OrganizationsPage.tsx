@@ -8,11 +8,15 @@ type Organization = {
   name: string
   organizationTypeName: string
   city: string
+  district: string | null
   profileInfo: string | null
   createdAt: string
 }
 type OrganizationType = { id: number; name: string }
 type Errors = { name?: string; type?: string; city?: string }
+
+/** Kurum türü listesindeki "yeni tür ekle" seçeneğinin değeri. */
+const NEW_TYPE = '__new__'
 
 export default function OrganizationsPage({ token, onSignOut }: { token: string; onSignOut: () => void }) {
   const [organizations, setOrganizations] = useState<Organization[]>([])
@@ -23,12 +27,14 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
   const [name, setName] = useState('')
   const [typeId, setTypeId] = useState('')
   const [city, setCity] = useState('')
+  const [district, setDistrict] = useState('')
   const [profileInfo, setProfileInfo] = useState('')
   const [errors, setErrors] = useState<Errors>({})
   const [formError, setFormError] = useState('')
   const [saving, setSaving] = useState(false)
 
   const [newType, setNewType] = useState('')
+  const [addingType, setAddingType] = useState(false)
   const [typeError, setTypeError] = useState('')
 
   const [managerFor, setManagerFor] = useState<Organization | null>(null)
@@ -81,6 +87,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
             name,
             organizationTypeId: Number(typeId),
             city,
+            district: district.trim() || null,
             profileInfo: profileInfo || null,
           }),
         },
@@ -89,6 +96,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
       setOrganizations((list) => [created, ...list])
       setName('')
       setCity('')
+      setDistrict('')
       setProfileInfo('')
     } catch (err) {
       setFormError(messageOf(err))
@@ -109,6 +117,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
       setTypes((list) => [...list, created])
       setTypeId(String(created.id))
       setNewType('')
+      setAddingType(false)
     } catch (err) {
       setTypeError(messageOf(err))
     }
@@ -132,23 +141,44 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
           </div>
 
           <div className="org-field">
+            <label htmlFor="org-district">İlçe (isteğe bağlı)</label>
+            <input id="org-district" maxLength={100} value={district} onChange={(e) => setDistrict(e.target.value)} />
+          </div>
+
+          <div className="org-field">
             <label htmlFor="org-type">Kurum türü</label>
-            <select id="org-type" value={typeId} onChange={(e) => setTypeId(e.target.value)} aria-invalid={!!errors.type}>
+            <select
+              id="org-type"
+              value={addingType ? NEW_TYPE : typeId}
+              onChange={(e) => {
+                const adding = e.target.value === NEW_TYPE
+                setAddingType(adding)
+                if (!adding) setTypeId(e.target.value)
+              }}
+              aria-invalid={!!errors.type}
+            >
               <option value="">Seçin</option>
               {types.map((t) => (
                 <option key={t.id} value={t.id}>{t.name}</option>
               ))}
+              <option value={NEW_TYPE}>+ Listede yok mu? Yeni tür ekle</option>
             </select>
             {errors.type && <span className="org-error">{errors.type}</span>}
-            <div className="org-inline">
-              <input
-                aria-label="Yeni kurum türü adı"
-                placeholder={types.length ? 'Listede yok mu? Yeni tür' : 'İlk kurum türünü ekleyin'}
-                value={newType}
-                onChange={(e) => setNewType(e.target.value)}
-              />
-              <button type="button" className="org-secondary" onClick={addType}>Tür ekle</button>
-            </div>
+            {(addingType || types.length === 0) && (
+              <div className="org-inline">
+                <input
+                  aria-label="Yeni kurum türü adı"
+                  placeholder={types.length ? 'Yeni tür adı' : 'İlk kurum türünü ekleyin'}
+                  value={newType}
+                  onChange={(e) => setNewType(e.target.value)}
+                  autoFocus={addingType}
+                />
+                <button type="button" className="org-secondary" onClick={addType}>Tür ekle</button>
+                {addingType && (
+                  <button type="button" className="org-secondary" onClick={() => setAddingType(false)}>Vazgeç</button>
+                )}
+              </div>
+            )}
             {typeError && <span className="org-error">{typeError}</span>}
           </div>
 
@@ -193,7 +223,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
                 <tr>
                   <th>Kurum</th>
                   <th>Tür</th>
-                  <th>Şehir</th>
+                  <th>Şehir / İlçe</th>
                   <th>Eklenme</th>
                   <th><span className="org-sr">İşlemler</span></th>
                 </tr>
@@ -206,7 +236,7 @@ export default function OrganizationsPage({ token, onSignOut }: { token: string;
                       {o.profileInfo && <div className="org-sub">{o.profileInfo}</div>}
                     </td>
                     <td>{o.organizationTypeName}</td>
-                    <td>{o.city}</td>
+                    <td>{o.district ? `${o.city} / ${o.district}` : o.city}</td>
                     <td>{new Date(o.createdAt).toLocaleDateString('tr-TR')}</td>
                     <td>
                       <button

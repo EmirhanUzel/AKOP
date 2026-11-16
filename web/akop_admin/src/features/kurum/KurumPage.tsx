@@ -8,6 +8,7 @@ type Organization = {
   name: string
   organizationTypeName: string
   city: string
+  district: string | null
   profileInfo: string | null
   createdAt: string
 }
@@ -45,6 +46,12 @@ export default function KurumPage({ token, onSignOut }: { token: string; onSignO
             <dd>{org.organizationTypeName}</dd>
             <dt>Şehir</dt>
             <dd>{org.city}</dd>
+            {org.district && (
+              <>
+                <dt>İlçe</dt>
+                <dd>{org.district}</dd>
+              </>
+            )}
             {org.profileInfo && (
               <>
                 <dt>Profil bilgisi</dt>
