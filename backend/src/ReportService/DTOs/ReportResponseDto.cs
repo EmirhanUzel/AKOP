@@ -10,6 +10,9 @@ public class ReportResponseDto
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public string? LocationDescription { get; set; }
+
+    // Soru kodu → seçenek kodu; metinler kategori listesindeki sorulardan bulunur
+    public Dictionary<string, string> Answers { get; set; } = new();
     public string Status { get; set; } = "";
     public DateTime CreatedAt { get; set; }
 
