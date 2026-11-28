@@ -108,6 +108,32 @@ void main() {
     expect(Map.fromEntries(form.fields)['subcategoryCode'], 'CURB_DAMAGE');
   });
 
+  test('oluşturma: cevaplar answers alanında JSON olarak gönderilir', () async {
+    final (repo, adapter) = _repo({'POST http://report/api/Reports': _created});
+    await repo.create(const NewReport(photos: ['a'], lat: 1, lng: 2, description: 'd', categoryCode: 'ROAD_DAMAGE', answers: {'SIZE': 'LARGE', 'BLOCKS_TRAFFIC': 'YES'}));
+    final form = adapter.calls.single.data as FormData;
+    expect(jsonDecode(Map.fromEntries(form.fields)['answers']!), {'SIZE': 'LARGE', 'BLOCKS_TRAFFIC': 'YES'});
+  });
+
+  test('kategoriler: sorular eşlenir; ihbar cevapları metne çevrilir', () async {
+    final (repo, _) = _repo({
+      'GET http://report/api/Reports/categories': (200, [
+        {'code': 'ROAD_DAMAGE', 'name': 'Yol hasarı', 'subcategories': [], 'questions': [
+          {'code': 'SIZE', 'text': 'Sorun ne büyüklükte?', 'type': 'SingleChoice', 'options': [{'code': 'SMALL', 'text': 'Küçük'}, {'code': 'LARGE', 'text': 'Büyük'}]},
+          {'code': 'BLOCKS_TRAFFIC', 'text': 'Trafiği engelliyor mu?', 'type': 'YesNo', 'options': [{'code': 'YES', 'text': 'Evet'}, {'code': 'NO', 'text': 'Hayır'}]},
+        ]},
+      ]),
+      'GET http://report/api/Reports/mine': (200, [
+        {'id': 'a', 'title': 'T', 'description': 'd', 'categoryCode': 'ROAD_DAMAGE', 'latitude': 1, 'longitude': 2, 'status': 'Pending', 'createdAt': '2026-11-01T10:00:00Z', 'answers': {'SIZE': 'LARGE', 'OLD': 'X'}},
+      ]),
+    });
+    final category = (await repo.categories()).single;
+    expect(category.questions.map((q) => q.code), ['SIZE', 'BLOCKS_TRAFFIC']);
+    final report = (await repo.myReports()).single;
+    expect(report.answers, {'SIZE': 'LARGE', 'OLD': 'X'});
+    expect(category.answerTexts(report.answers), [('Sorun ne büyüklükte?', 'Büyük')]); // bilinmeyen soru atlanır
+  });
+
   test('kategoriler: alt kategorileriyle eşlenir, ikinci çağrıda istek atılmaz', () async {
     final (repo, adapter) = _repo(_categories);
     final list = await repo.categories();

@@ -38,6 +38,7 @@ class _DetailStepState extends ConsumerState<DetailStep> {
     final draft = ref.read(draftProvider.notifier);
     final category = ref.watch(draftProvider.select((d) => d.categoryCode));
     final subcategory = ref.watch(draftProvider.select((d) => d.subcategoryCode));
+    final answers = ref.watch(draftProvider.select((d) => d.answers));
     final photo = ref.watch(draftProvider.select((d) => d.photos.firstOrNull));
     final categories = ref.watch(reportCategoriesProvider);
     final selected = categoryOf(categories.value, category);
@@ -193,6 +194,23 @@ class _DetailStepState extends ConsumerState<DetailStep> {
                 decoration: const InputDecoration(),
                 items: [for (final s in selected.subcategories) DropdownMenuItem(value: s.code, child: Text(s.name))],
                 onChanged: draft.setSubcategory,
+              ),
+            ],
+            // Dinamik form: seçili kategorinin ek soruları; seçili seçeneğe tekrar dokunmak cevabı kaldırır
+            for (final q in selected?.questions ?? const <ReportQuestion>[]) ...[
+              const SizedBox(height: 20),
+              FieldLabel(q.text, optional: true),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final o in q.options)
+                    ChoiceChip(
+                      label: Text(o.text),
+                      selected: answers[q.code] == o.code,
+                      onSelected: (on) => draft.setAnswer(q.code, on ? o.code : null),
+                    ),
+                ],
               ),
             ],
           ],

@@ -122,6 +122,8 @@ class _SummaryStepState extends ConsumerState<SummaryStep> {
                     shape: const StadiumBorder(),
                     labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                   ),
+                  for (final (q, a) in cat.answerTexts(draft.answers))
+                    Padding(padding: const EdgeInsets.only(top: 4), child: Text('$q $a', style: const TextStyle(color: AppColors.textSecondary))),
                 ],
               ],
             ),

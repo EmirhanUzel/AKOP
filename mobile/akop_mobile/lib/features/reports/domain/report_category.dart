@@ -6,14 +6,35 @@ class ReportSubcategory {
   final String name;
 }
 
+class ReportQuestionOption {
+  const ReportQuestionOption(this.code, this.text);
+  final String code;
+  final String text;
+}
+
+/// Dinamik form sorusu; isteğe bağlı. Evet/hayır soruları da YES/NO seçenekleriyle gelir.
+class ReportQuestion {
+  const ReportQuestion(this.code, this.text, this.options);
+  final String code;
+  final String text;
+  final List<ReportQuestionOption> options;
+}
+
 /// Liste GET /api/Reports/categories ile gelir; uygulamada yalnızca simgeler tutulur.
 class ReportCategory {
-  const ReportCategory(this.code, this.name, [this.subcategories = const []]);
+  const ReportCategory(this.code, this.name, [this.subcategories = const [], this.questions = const []]);
   final String code;
   final String name;
   final List<ReportSubcategory> subcategories;
+  final List<ReportQuestion> questions;
 
   IconData get icon => _icons[code] ?? Icons.more_horiz;
+
+  /// Cevapları (soru kodu → seçenek kodu) soru ve seçenek metinlerine çevirir; bilinmeyenler atlanır.
+  List<(String, String)> answerTexts(Map<String, String> answers) => [
+        for (final q in questions)
+          if (q.options.where((o) => o.code == answers[q.code]).firstOrNull case final o?) (q.text, o.text),
+      ];
 }
 
 const _icons = {
