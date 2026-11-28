@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../application/draft_controller.dart';
+import '../../data/place_search.dart';
 import '../report_map.dart';
 import 'step_scaffold.dart';
 
@@ -20,8 +21,11 @@ class LocationStep extends ConsumerStatefulWidget {
 
 class _LocationStepState extends ConsumerState<LocationStep> {
   final _map = MapController();
+  final _query = TextEditingController();
   bool _denied = false;
   bool _locating = false;
+  bool _searching = false;
+  List<Place>? _results;
 
   @override
   void initState() {
@@ -35,7 +39,29 @@ class _LocationStepState extends ConsumerState<LocationStep> {
   @override
   void dispose() {
     _map.dispose();
+    _query.dispose();
     super.dispose();
+  }
+
+  Future<void> _search() async {
+    final q = _query.text.trim();
+    if (q.isEmpty) return;
+    setState(() => _searching = true);
+    try {
+      final results = await ref.read(placeSearchProvider).search(q);
+      if (mounted) setState(() => _results = results);
+    } catch (_) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Arama yapılamadı. Bağlantınızı kontrol edin.')));
+    } finally {
+      if (mounted) setState(() => _searching = false);
+    }
+  }
+
+  void _pick(Place place) {
+    ref.read(draftProvider.notifier).setLocation(place.point);
+    _map.move(place.point, 17);
+    FocusScope.of(context).unfocus();
+    setState(() => _results = null);
   }
 
   Future<void> _locate() async {
@@ -93,9 +119,58 @@ class _LocationStepState extends ConsumerState<LocationStep> {
                     ),
                   ),
                 ),
-                if (_denied)
+                Positioned(
+                  top: 12,
+                  left: 16,
+                  right: 72,
+                  child: Column(
+                    children: [
+                      Material(
+                        color: AppColors.surface,
+                        elevation: 2,
+                        borderRadius: BorderRadius.circular(8),
+                        child: TextField(
+                          controller: _query,
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (_) => _search(),
+                          decoration: InputDecoration(
+                            hintText: 'Adres veya yer ara',
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: _searching
+                                ? const Padding(padding: EdgeInsets.all(14), child: SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2)))
+                                : null,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            filled: false,
+                          ),
+                        ),
+                      ),
+                      if (_results case final results?)
+                        Material(
+                          color: AppColors.surface,
+                          elevation: 2,
+                          borderRadius: BorderRadius.circular(8),
+                          child: results.isEmpty
+                              ? const ListTile(dense: true, title: Text('Sonuç bulunamadı.'))
+                              : Column(
+                                  children: [
+                                    for (final p in results)
+                                      ListTile(
+                                        dense: true,
+                                        leading: const Icon(Icons.place_outlined),
+                                        title: Text(p.name, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                        onTap: () => _pick(p),
+                                      ),
+                                  ],
+                                ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (_denied && _results == null)
                   Positioned(
-                    top: 12,
+                    top: 72,
                     left: 16,
                     right: 72,
                     child: Container(
