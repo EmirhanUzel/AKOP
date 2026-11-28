@@ -27,6 +27,21 @@ void main() {
     expect(c.read(draftProvider).subcategoryCode, isNull);
   });
 
+  test('cevap seçilir/kaldırılır, kategori değişince cevaplar temizlenir', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final d = c.read(draftProvider.notifier)
+      ..setCategory('ROAD_DAMAGE')
+      ..setAnswer('SIZE', 'LARGE')
+      ..setAnswer('BLOCKS_TRAFFIC', 'YES')
+      ..setAnswer('BLOCKS_TRAFFIC', null);
+    expect(c.read(draftProvider).answers, {'SIZE': 'LARGE'});
+    d.setCategory('ROAD_DAMAGE');
+    expect(c.read(draftProvider).answers, {'SIZE': 'LARGE'});
+    d.setCategory('PARK');
+    expect(c.read(draftProvider).answers, isEmpty);
+  });
+
   test('önerilen kategori fotoğraflar silinince kalkar, kullanıcının seçtiği kalır', () {
     final c = ProviderContainer();
     addTearDown(c.dispose);

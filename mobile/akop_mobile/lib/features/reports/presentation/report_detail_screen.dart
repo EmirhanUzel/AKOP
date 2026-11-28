@@ -47,6 +47,8 @@ class ReportDetailScreen extends ConsumerWidget {
               shape: const StadiumBorder(),
               labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
+            for (final (q, a) in category.answerTexts(report.answers))
+              Padding(padding: const EdgeInsets.only(top: 4), child: Text('$q $a', style: const TextStyle(color: AppColors.textSecondary))),
           ],
           if (report.description.isNotEmpty) ...[
             const SizedBox(height: 16),

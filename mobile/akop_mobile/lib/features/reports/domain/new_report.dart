@@ -9,6 +9,7 @@ class NewReport {
     this.categoryCode,
     this.subcategoryCode,
     this.locationDescription,
+    this.answers = const {},
   });
 
   final List<String> photos;
@@ -19,4 +20,7 @@ class NewReport {
   final String? categoryCode;
   final String? subcategoryCode;
   final String? locationDescription;
+
+  /// Dinamik form cevapları: soru kodu → seçenek kodu.
+  final Map<String, String> answers;
 }

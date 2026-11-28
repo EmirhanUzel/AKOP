@@ -20,6 +20,7 @@ class Report {
     this.subcategoryCode,
     this.description = '',
     this.imageUrls = const [],
+    this.answers = const {},
   });
 
   final String id;
@@ -33,4 +34,7 @@ class Report {
 
   /// Sunucudaki göreli fotoğraf adresleri; [ReportRepository.image] ile indirilir.
   final List<String> imageUrls;
+
+  /// Dinamik form cevapları: soru kodu → seçenek kodu.
+  final Map<String, String> answers;
 }

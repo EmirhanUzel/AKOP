@@ -18,6 +18,7 @@ class ReportDraft {
     this.subcategoryCode,
     this.categoryAuto = false,
     this.locationDescription = '',
+    this.answers = const {},
   });
 
   final List<String> photos;
@@ -31,6 +32,9 @@ class ReportDraft {
   final bool categoryAuto;
   final String locationDescription;
 
+  /// Dinamik form cevapları (soru kodu → seçenek kodu); yalnızca seçili kategorinin soruları.
+  final Map<String, String> answers;
+
   ReportDraft copyWith({
     List<String>? photos,
     LatLng? location,
@@ -39,6 +43,7 @@ class ReportDraft {
     String? categoryCode,
     String? subcategoryCode,
     String? locationDescription,
+    Map<String, String>? answers,
     bool clearCategory = false,
     bool clearSubcategory = false,
     bool? categoryAuto,
@@ -52,6 +57,7 @@ class ReportDraft {
         subcategoryCode: clearCategory || clearSubcategory ? null : (subcategoryCode ?? this.subcategoryCode),
         categoryAuto: clearCategory ? false : (categoryAuto ?? this.categoryAuto),
         locationDescription: locationDescription ?? this.locationDescription,
+        answers: clearCategory ? const {} : (answers ?? this.answers),
       );
 
   /// Konum seçilmeden çağrılmaz: Konum adımı seçilmeden "Devam"ı kapalı tutar.
@@ -66,6 +72,7 @@ class ReportDraft {
       categoryCode: categoryCode,
       subcategoryCode: subcategoryCode,
       locationDescription: locationDescription.trim().isEmpty ? null : locationDescription.trim(),
+      answers: answers,
     );
   }
 }
@@ -93,7 +100,7 @@ class DraftController extends Notifier<ReportDraft> {
 
   void setLocationDescription(String v) => state = state.copyWith(locationDescription: v);
 
-  /// Alt kategori başka kategoriye ait olamaz (sunucu 400 verir): kategori değişince temizlenir.
+  /// Alt kategori ve cevaplar başka kategoriye ait olamaz (sunucu 400 verir): kategori değişince temizlenir.
   /// [auto]: fotoğraf önerisinden seçildi. Kullanıcının seçtiği kategori öneriyle değiştirilmez.
   void setCategory(String? code, {bool auto = false}) {
     if (code == state.categoryCode) {
@@ -102,7 +109,15 @@ class DraftController extends Notifier<ReportDraft> {
     }
     state = code == null
         ? state.copyWith(clearCategory: true)
-        : state.copyWith(categoryCode: code, clearSubcategory: true, categoryAuto: auto);
+        : state.copyWith(categoryCode: code, clearSubcategory: true, categoryAuto: auto, answers: const {});
+  }
+
+  /// [option] null ise soru cevapsız kalır (sorular isteğe bağlı).
+  /// Soruyu cevaplamak kategoriyi onaylamaktır: fotoğraf değişince öneri kategoriyi (ve cevapları) değiştirmez.
+  void setAnswer(String question, String? option) {
+    final answers = {...state.answers}..remove(question);
+    if (option != null) answers[question] = option;
+    state = state.copyWith(answers: answers, categoryAuto: false);
   }
 
   void setSubcategory(String? code) => state = code == null

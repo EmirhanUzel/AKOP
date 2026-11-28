@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -50,6 +51,7 @@ class ApiReportRepository implements ReportRepository {
       'latitude': r.lat, // Dart double'ı nokta ile yazar (39.92), sunucu bunu bekler
       'longitude': r.lng,
       if (r.locationDescription != null) 'locationDescription': r.locationDescription,
+      if (r.answers.isNotEmpty) 'answers': jsonEncode(r.answers), // {"SIZE":"LARGE"}
       'files': [for (final p in r.photos) await _encode(p)],
     });
     final res = await _call(() => _dio.post<dynamic>('$_baseUrl/api/Reports', data: form));
@@ -75,6 +77,12 @@ class ApiReportRepository implements ReportRepository {
         ReportCategory(c['code'] as String, c['name'] as String, [
           for (final s in (c['subcategories'] as List? ?? const []).whereType<Map<String, dynamic>>())
             ReportSubcategory(s['code'] as String, s['name'] as String),
+        ], [
+          for (final q in (c['questions'] as List? ?? const []).whereType<Map<String, dynamic>>())
+            ReportQuestion(q['code'] as String, q['text'] as String, [
+              for (final o in (q['options'] as List? ?? const []).whereType<Map<String, dynamic>>())
+                ReportQuestionOption(o['code'] as String, o['text'] as String),
+            ]),
         ]),
     ];
   }
@@ -114,6 +122,10 @@ class ApiReportRepository implements ReportRepository {
       subcategoryCode: j['subcategoryCode'] as String?,
       description: j['description'] as String? ?? '',
       imageUrls: [...?(j['imageUrls'] as List?)?.whereType<String>()],
+      answers: {
+        for (final e in (j['answers'] as Map? ?? const {}).entries)
+          if (e.key is String && e.value is String) e.key as String: e.value as String,
+      },
     );
   }
 
