@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
+
 using ReportService.Data;
 using ReportService.Models;
 
@@ -48,6 +50,31 @@ public class ReportRepository : IReportRepository
                 image.Id == imageId &&
                 image.ReportId == reportId &&
                 image.Report.CitizenId == citizenId);
+    }
+
+    // PostGIS: IsWithinDistance → ST_DWithin, Distance → ST_Distance; geography kolonunda ikisi de metre
+    public async Task<List<NearbyReport>> GetNearbyOpenAsync(Point point, double radiusMeters, string? categoryCode, int limit)
+    {
+        var query = _reportDbContext.Reports
+            .AsNoTracking()
+            .Where(report =>
+                report.Status != ReportStatus.Resolved &&
+                report.Location.IsWithinDistance(point, radiusMeters));
+
+        if (categoryCode != null)
+        {
+            query = query.Where(report => report.CategoryCode == categoryCode);
+        }
+
+        return await query
+            .Select(report => new NearbyReport
+            {
+                Report = report,
+                DistanceMeters = report.Location.Distance(point)
+            })
+            .OrderBy(nearby => nearby.DistanceMeters)
+            .Take(limit)
+            .ToListAsync();
     }
 
 

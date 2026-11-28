@@ -33,7 +33,9 @@ builder.Services.AddOpenApi();
 // PostgreSQL ve Entity Framework Core
 builder.Services.AddDbContext<ReportDbContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("ReportDb")
+        builder.Configuration.GetConnectionString("ReportDb"),
+        // PostGIS: konum kolonu ve yakınlık sorguları için
+        npgsql => npgsql.UseNetTopologySuite()
     )
 );
 
