@@ -42,6 +42,9 @@ public class ReportDbContext : DbContext
             entity.Property(report => report.LocationDescription)
                 .HasMaxLength(300);
 
+            entity.Property(report => report.Answers)
+                .HasColumnType("jsonb");
+
             entity.Property(report => report.Status)
                 .IsRequired()
                 .HasConversion<string>()

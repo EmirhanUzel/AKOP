@@ -28,6 +28,9 @@ namespace ReportService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Answers")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("CategoryCode")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");

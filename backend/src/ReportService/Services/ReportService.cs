@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 using ReportService.Constants;
 using ReportService.Repositories;
 using ReportService.Models;
@@ -52,6 +54,8 @@ public class ReportService : IReportService
             ? null
             : dto.LocationDescription.Trim();
 
+        var answers = ValidateAnswers(dto.Answers, categoryCode);
+
         var formats = await ValidateImagesAsync(dto.Files);
 
         var report = new Report
@@ -63,7 +67,8 @@ public class ReportService : IReportService
             SubcategoryCode = subcategoryCode,
             Latitude = dto.Latitude!.Value,
             Longitude = dto.Longitude!.Value,
-            LocationDescription = locationDescription
+            LocationDescription = locationDescription,
+            Answers = answers == null ? null : JsonSerializer.Serialize(answers)
         };
 
         var savedKeys = new List<string>();
@@ -105,6 +110,55 @@ public class ReportService : IReportService
         }
 
         return MapToResponse(report);
+    }
+
+    // Her cevap seçilen kategorinin bir sorusuna ve o sorunun bir seçeneğine ait olmalı
+    private static Dictionary<string, string>? ValidateAnswers(string? answersJson, string? categoryCode)
+    {
+        if (string.IsNullOrWhiteSpace(answersJson))
+        {
+            return null;
+        }
+
+        Dictionary<string, string>? answers;
+
+        try
+        {
+            answers = JsonSerializer.Deserialize<Dictionary<string, string>>(answersJson);
+        }
+        catch (JsonException)
+        {
+            throw new ArgumentException("Cevaplar, değerleri metin olan bir JSON nesnesi olmalıdır.");
+        }
+
+        if (answers == null || answers.Count == 0)
+        {
+            return null;
+        }
+
+        if (categoryCode == null)
+        {
+            throw new ArgumentException("Soruları cevaplamak için önce kategori seçilmelidir.");
+        }
+
+        var questions = ReportQuestions.For(categoryCode);
+
+        foreach (var (questionCode, optionCode) in answers)
+        {
+            var question = questions.FirstOrDefault(question => question.Code == questionCode);
+
+            if (question == null)
+            {
+                throw new ArgumentException($"{questionCode} sorusu seçilen kategoriye ait değil.");
+            }
+
+            if (!question.Options.Any(option => option.Code == optionCode))
+            {
+                throw new ArgumentException($"{questionCode} sorusu için geçersiz cevap.");
+            }
+        }
+
+        return answers;
     }
 
     // Hiçbir dosya diske yazılmadan önce hepsi kontrol edilir
@@ -200,6 +254,21 @@ public class ReportService : IReportService
                         Code = subcategory.Code,
                         Name = subcategory.Name
                     })
+                    .ToList(),
+                Questions = ReportQuestions.For(category.Code)
+                    .Select(question => new QuestionDto
+                    {
+                        Code = question.Code,
+                        Text = question.Text,
+                        Type = question.Type.ToString(),
+                        Options = question.Options
+                            .Select(option => new QuestionOptionDto
+                            {
+                                Code = option.Code,
+                                Text = option.Text
+                            })
+                            .ToList()
+                    })
                     .ToList()
             })
             .ToList();
@@ -217,6 +286,9 @@ public class ReportService : IReportService
             Latitude = report.Latitude,
             Longitude = report.Longitude,
             LocationDescription = report.LocationDescription,
+            Answers = report.Answers == null
+                ? new Dictionary<string, string>()
+                : JsonSerializer.Deserialize<Dictionary<string, string>>(report.Answers) ?? new Dictionary<string, string>(),
             Status = report.Status.ToString(),
             CreatedAt = report.CreatedAt,
             ImageUrls = report.Images
