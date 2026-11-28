@@ -35,10 +35,7 @@ class ReportCard extends ConsumerWidget {
           child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            backgroundColor: AppColors.infoBg,
-            child: Icon(category?.icon ?? Icons.assignment_outlined, color: AppColors.navy),
-          ),
+          _Thumb(path: report.imageUrls.firstOrNull, icon: category?.icon ?? Icons.assignment_outlined),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -72,6 +69,30 @@ class ReportCard extends ConsumerWidget {
         ],
       ),
         ),
+      ),
+    );
+  }
+}
+
+/// İhbarın ilk fotoğrafı; fotoğraf yoksa, yüklenirken ya da yüklenemezse kategori simgesi.
+class _Thumb extends ConsumerWidget {
+  const _Thumb({required this.path, required this.icon});
+
+  final String? path;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final placeholder = ColoredBox(color: AppColors.infoBg, child: Center(child: Icon(icon, color: AppColors.navy)));
+    final bytes = path == null ? null : ref.watch(reportImageProvider(path!)).value;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: SizedBox(
+        width: 64,
+        height: 64,
+        child: bytes == null
+            ? placeholder
+            : Image.memory(bytes, fit: BoxFit.cover, cacheWidth: 192, errorBuilder: (_, _, _) => placeholder),
       ),
     );
   }
