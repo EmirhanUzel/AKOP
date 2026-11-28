@@ -1,5 +1,7 @@
 using System.Text.Json;
 
+using NetTopologySuite.Geometries;
+
 using ReportService.Constants;
 using ReportService.Repositories;
 using ReportService.Models;
@@ -67,6 +69,7 @@ public class ReportService : IReportService
             SubcategoryCode = subcategoryCode,
             Latitude = dto.Latitude!.Value,
             Longitude = dto.Longitude!.Value,
+            Location = ToPoint(dto.Latitude.Value, dto.Longitude.Value),
             LocationDescription = locationDescription,
             Answers = answers == null ? null : JsonSerializer.Serialize(answers)
         };
@@ -239,6 +242,12 @@ public class ReportService : IReportService
         }
 
         return new ReportImageFile(stream, image.ContentType);
+    }
+
+    // NetTopologySuite'te X boylam, Y enlem; SRID 4326 = GPS koordinatları (WGS 84)
+    private static Point ToPoint(double latitude, double longitude)
+    {
+        return new Point(longitude, latitude) { SRID = 4326 };
     }
 
     public List<CategoryDto> GetCategories()

@@ -1,3 +1,5 @@
+using NetTopologySuite.Geometries;
+
 using ReportService.Models;
 
 namespace ReportService.Repositories;
@@ -8,4 +10,5 @@ public interface IReportRepository
     Task<List<Report>> GetByCitizenIdAsync (string citizenId);
     Task<Report?> GetCitizenReportAsync(Guid reportId, string citizenId);
     Task<ReportImage?> GetCitizenImageAsync(Guid reportId, Guid imageId, string citizenId);
+    Task<List<NearbyReport>> GetNearbyOpenAsync(Point point, double radiusMeters, string? categoryCode, int limit);
 }

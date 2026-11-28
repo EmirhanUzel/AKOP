@@ -1,4 +1,6 @@
 
+using NetTopologySuite.Geometries;
+
 namespace ReportService.Models;
 
 public class Report
@@ -11,6 +13,9 @@ public class Report
     public string? SubcategoryCode { get; set; }
     public double Latitude {get; set;}
     public double Longitude {get; set;}
+
+    // Enlem/boylamın PostGIS karşılığı; yakınlık sorguları bu kolon üzerinden metreyle çalışır
+    public Point Location { get; set; } = null!;
     public string? LocationDescription { get; set; }
 
     // Dinamik form cevapları; veritabanında jsonb, örnek: {"SIZE":"LARGE"}

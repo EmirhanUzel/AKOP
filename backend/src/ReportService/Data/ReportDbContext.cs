@@ -18,6 +18,8 @@ public class ReportDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.HasPostgresExtension("postgis");
+
         modelBuilder.Entity<Report>(entity =>
         {
             entity.HasKey(report => report.Id);
@@ -44,6 +46,14 @@ public class ReportDbContext : DbContext
 
             entity.Property(report => report.Answers)
                 .HasColumnType("jsonb");
+
+            // geography: mesafeler derece yerine metre olarak hesaplanır
+            entity.Property(report => report.Location)
+                .IsRequired()
+                .HasColumnType("geography (point, 4326)");
+
+            entity.HasIndex(report => report.Location)
+                .HasMethod("gist");
 
             entity.Property(report => report.Status)
                 .IsRequired()
